@@ -10,7 +10,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3DE7C993-B1B1-4754-8726-64576106DBCD}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		Analysis.ruleset = Analysis.ruleset
+		Directory.Build.props = Directory.Build.props
+		.github\workflows\dotnetcore-pull.yml = .github\workflows\dotnetcore-pull.yml
+		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
 		InteractionLanguage.md = InteractionLanguage.md
 		LICENSE = LICENSE
 		NuGet.config = NuGet.config
@@ -19,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C0B75D34-9AB3-4308-AA98-120F0967E297}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoStep.Web.Tests", "test\AutoStep.Web.Tests\AutoStep.Web.Tests.csproj", "{7EA5A45A-D5BB-4F57-AA49-E6BFD63847C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoStep.Web.Tests", "test\AutoStep.Web.Tests\AutoStep.Web.Tests.csproj", "{7EA5A45A-D5BB-4F57-AA49-E6BFD63847C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

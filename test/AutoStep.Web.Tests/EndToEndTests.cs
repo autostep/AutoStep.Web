@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using AutoStep.Execution;
 using AutoStep.Execution.Contexts;
 using AutoStep.Execution.Dependency;
 using AutoStep.Execution.Events;
+using AutoStep.Extensions;
+using AutoStep.Extensions.Abstractions;
 using AutoStep.Language;
 using AutoStep.Projects;
+using AutoStep.Projects.Configuration;
+using AutoStep.Projects.Files;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
@@ -34,23 +42,48 @@ namespace AutoStep.Web.Tests
 
             project.TryAddFile(new ProjectTestFile("/test", new StringContentSource(Test)));
 
-            project.AddWebInteractions(new NullLoggerFactory());
+            var extension = new Extension(NullLoggerFactory.Instance);
 
-            await project.Compiler.CompileAsync();
+            var configuration = new ConfigurationBuilder().Build();
 
-            project.Compiler.Link();
+            extension.AttachToProject(configuration, project);
 
-            var testRun = project.CreateTestRun();
+            // Get additional interaction file.
+            var fileSet = FileSet.Create(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), new[] { "content/*.asi" });
+            project.MergeInteractionFileSet(fileSet);
 
-            testRun.AddWebHandlers();
+            Assert.Empty((await project.Compiler.CompileAsync()).Messages);
+
+            Assert.Empty(project.Compiler.Link().Messages);
+
+            var testRun = project.CreateTestRun(configuration);
+
+            extension.ExtendExecution(configuration, testRun);
 
             var result = new ResultHandler();
 
             testRun.Events.Add(result);
 
-            await testRun.ExecuteAsync(new NullLoggerFactory());
+            await testRun.ExecuteAsync(new NullLoggerFactory(), (cfg, s) => {
+
+                s.RegisterSingleInstance<ILoadedExtensions>(new FakeLoadedExtensions());
+
+                extension.ConfigureExecutionServices(cfg, s);
+            });
 
             Assert.Null(result.Failure);
+        }
+    }
+
+    internal class FakeLoadedExtensions : ILoadedExtensions
+    {
+        public string ExtensionsRootDir => throw new NotImplementedException();
+
+        public IEnumerable<IPackageMetadata> LoadedPackages => throw new NotImplementedException();
+
+        public string GetPackagePath(string packageId, params string[] directoryParts)
+        {
+            throw new NotImplementedException();
         }
     }
 
