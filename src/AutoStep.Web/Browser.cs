@@ -36,7 +36,6 @@ namespace AutoStep.Web
 
             var chromeOptions = new ChromeOptions();
             chromeOptions.Proxy = null;
-            chromeOptions.AddArgument("--headless");
 
             driver = new ChromeDriver(driverDir, chromeOptions);
         }
