@@ -41,7 +41,7 @@ namespace AutoStep.Web
             driver = new ChromeDriver(driverDir, chromeOptions);
         }
 
-        public IWebDriver Driver => driver!;    
+        public IWebDriver Driver => driver!;
 
         public void Dispose()
         {

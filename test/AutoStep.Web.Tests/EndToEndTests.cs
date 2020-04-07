@@ -85,6 +85,11 @@ namespace AutoStep.Web.Tests
         {
             throw new NotImplementedException();
         }
+
+        public bool IsPackageLoaded(string packageId)
+        {
+            return false;
+        }
     }
 
     internal class ResultHandler : BaseEventHandler
