@@ -35,7 +35,7 @@ namespace AutoStep.Web
             }
 
             var chromeDriverService = ChromeDriverService.CreateDefaultService(driverDir);
-            chromeDriverService.SuppressInitialDiagnosticInformation = true;
+            chromeDriverService.HideCommandPromptWindow = true;
 
             var chromeOptions = new ChromeOptions();
 
