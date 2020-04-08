@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="content\DefaultInteractions.asi" Pack="true" PackagePath="content">
+    <None Update="content\DefaultInteractions.asi" Pack="true" PackagePath="">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
