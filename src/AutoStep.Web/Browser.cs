@@ -34,10 +34,12 @@ namespace AutoStep.Web
                 driverDir = Path.GetDirectoryName(typeof(Browser).Assembly.Location);
             }
 
-            var chromeOptions = new ChromeOptions();
-            chromeOptions.Proxy = null;
+            var chromeDriverService = ChromeDriverService.CreateDefaultService(driverDir);
+            chromeDriverService.SuppressInitialDiagnosticInformation = true;
 
-            driver = new ChromeDriver(driverDir, chromeOptions);
+            var chromeOptions = new ChromeOptions();
+
+            driver = new ChromeDriver(chromeDriverService, chromeOptions);
         }
 
         public IWebDriver Driver => driver!;
