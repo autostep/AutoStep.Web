@@ -17,13 +17,13 @@ Component: button
 
   traits: clickable, named
 
-  locateNamed(name): select('input[type=submit]') -> withAttribute('aria-label', name)
+  locateNamed(name): select('input[type=submit]') -> withText(name)
 
 Component: field
 
   traits: editable, named
 
-  locateNamed(name): select('input[type=text]') -> withAttribute('aria-label', name)
+  locateNamed(name): select('input[type=text]') -> withText(name)
 
 Component: page
 
