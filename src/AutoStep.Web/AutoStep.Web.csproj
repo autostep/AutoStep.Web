@@ -27,8 +27,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="AutoStep" Version="1.0.0-extensions.264" />
-    <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.20" />
+    <PackageReference Include="AutoStep" Version="1.0.0-develop.273" />
+    <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.29" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.1" />
     <PackageReference Include="Selenium.Chrome.WebDriver" Version="79.0.0" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using AutoStep.Execution;
 using AutoStep.Execution.Contexts;
 using AutoStep.Execution.Dependency;
 using AutoStep.Execution.Events;
@@ -12,7 +10,6 @@ using AutoStep.Extensions;
 using AutoStep.Extensions.Abstractions;
 using AutoStep.Language;
 using AutoStep.Projects;
-using AutoStep.Projects.Configuration;
 using AutoStep.Projects.Files;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
