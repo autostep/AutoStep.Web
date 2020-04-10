@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoStep" Version="1.0.0-develop.273" />
-    <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.29" />
+    <PackageReference Include="AutoStep" Version="1.0.0-develop.277" />
+    <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.31" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="Selenium.Chrome.WebDriver" Version="79.0.0" />
     <PackageReference Include="xunit" Version="2.4.0" />

@@ -63,7 +63,7 @@ namespace AutoStep.Web.Tests
 
             await testRun.ExecuteAsync(new NullLoggerFactory(), (cfg, s) => {
 
-                s.RegisterSingleInstance<ILoadedExtensions>(new FakeLoadedExtensions());
+                s.RegisterInstance<ILoadedExtensions>(new FakeLoadedExtensions());
 
                 extension.ConfigureExecutionServices(cfg, s);
             });
@@ -93,7 +93,7 @@ namespace AutoStep.Web.Tests
     {
         public Exception Failure { get; set; }
 
-        public override async ValueTask OnScenario(IServiceScope scope, ScenarioContext ctxt, Func<IServiceScope, ScenarioContext, ValueTask> nextHandler)
+        public override async ValueTask OnScenario(IServiceProvider scope, ScenarioContext ctxt, Func<IServiceProvider, ScenarioContext, ValueTask> nextHandler)
         {
             await nextHandler(scope, ctxt);
 

@@ -1,15 +1,17 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using AutoStep.Execution.Dependency;
 using AutoStep.Execution.Interaction;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AutoStep.Web
 {
 
     public static class ResolveExtensions
     {
-        public static Browser Browser(this IServiceScope scope)
+        public static Browser Browser(this IServiceProvider scope)
         {
-            return scope.Resolve<Browser>();
+            return scope.GetRequiredService<Browser>();
         }
     }
 

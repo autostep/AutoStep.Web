@@ -19,7 +19,7 @@ namespace AutoStep.Web
 
         public void AttachToProject(IConfiguration projectConfig, Project project)
         {
-            project.Compiler.AddStaticStepDefinitionSource(new AssemblyStepDefinitionSource(typeof(Extension).Assembly, logFactory));
+            project.Compiler.AddStepDefinitionSource(new AssemblyStepDefinitionSource(typeof(Extension).Assembly, logFactory));
 
             project.Compiler.Interactions.AddMethods<InteractionMethods>();
         }

@@ -10,7 +10,8 @@ namespace AutoStep.Web
     {        
         private readonly ILoadedExtensions extensionInfo; 
 
-        IWebDriver? driver;
+        private IWebDriver? driver;
+        private ChromeDriverService chromeDriverService;
 
         public Browser(ILoadedExtensions extensionInfo)
         {
@@ -34,7 +35,7 @@ namespace AutoStep.Web
                 driverDir = Path.GetDirectoryName(typeof(Browser).Assembly.Location);
             }
 
-            var chromeDriverService = ChromeDriverService.CreateDefaultService(driverDir);
+            chromeDriverService = ChromeDriverService.CreateDefaultService(driverDir);
             chromeDriverService.HideCommandPromptWindow = true;
 
             var chromeOptions = new ChromeOptions();
@@ -49,7 +50,15 @@ namespace AutoStep.Web
             if (driver is object)
             {
                 driver!.Quit();
+                driver.Dispose();
                 driver = null;
+            }
+
+            // Dispose of the chrome driver as well.
+            if(chromeDriverService is object)
+            {
+                chromeDriverService.Dispose();
+                chromeDriverService = null;
             }
         }
     }
