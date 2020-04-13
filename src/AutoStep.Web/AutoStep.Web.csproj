@@ -13,7 +13,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/autostep/AutoStep.Web</RepositoryUrl>
-    <PackageTags>testing, gherkin</PackageTags>
+    <PackageTags>testing, gherkin, autostep</PackageTags>
     <PackageIcon>nuget-icon.png</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
