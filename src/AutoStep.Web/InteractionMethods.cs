@@ -15,7 +15,19 @@ namespace AutoStep.Web
             this.browser = browser;
         }
 
-        [InteractionMethod("select")]
+        [InteractionMethod("select", Documentation = @"
+            
+            Select elements from the current page, using a CSS selector. For example:
+   
+            ```
+                # All inputs with the attribute 'button'.
+                select('input[type=button]') 
+                
+                # All elements with the class 'cssclass'.
+                select('.cssclass')
+            ```
+
+        ")]
         public void Select(MethodContext ctxt, string selector)
         {
             var elements = new ElementsQuery(browser);
