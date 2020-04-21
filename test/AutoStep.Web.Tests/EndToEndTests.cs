@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoStep.Execution.Contexts;
 using AutoStep.Execution.Dependency;
@@ -61,7 +62,7 @@ namespace AutoStep.Web.Tests
 
             testRun.Events.Add(result);
 
-            await testRun.ExecuteAsync(new NullLoggerFactory(), (cfg, s) => {
+            await testRun.ExecuteAsync(new NullLoggerFactory(), CancellationToken.None, (cfg, s) => {
 
                 s.RegisterInstance<ILoadedExtensions>(new FakeLoadedExtensions());
 
@@ -78,6 +79,10 @@ namespace AutoStep.Web.Tests
 
         public IEnumerable<IPackageMetadata> LoadedPackages => throw new NotImplementedException();
 
+        public void Dispose()
+        {
+        }
+
         public string GetPackagePath(string packageId, params string[] directoryParts)
         {
             throw new NotImplementedException();
@@ -93,9 +98,9 @@ namespace AutoStep.Web.Tests
     {
         public Exception Failure { get; set; }
 
-        public override async ValueTask OnScenario(IServiceProvider scope, ScenarioContext ctxt, Func<IServiceProvider, ScenarioContext, ValueTask> nextHandler)
+        public override async ValueTask OnScenarioAsync(IServiceProvider scope, ScenarioContext ctxt, Func<IServiceProvider, ScenarioContext, CancellationToken, ValueTask> nextHandler, CancellationToken cancelToken)
         {
-            await nextHandler(scope, ctxt);
+            await nextHandler(scope, ctxt, cancelToken);
 
             Failure = ctxt.FailException;
         }

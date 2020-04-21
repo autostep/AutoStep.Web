@@ -7,9 +7,9 @@ namespace AutoStep.Web
     [Steps]
     public class NavigationSteps
     {
-        private readonly Browser browser;
+        private readonly IBrowser browser;
 
-        public NavigationSteps(Browser browser)
+        public NavigationSteps(IBrowser browser)
         {
             this.browser = browser;
         }

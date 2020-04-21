@@ -1,12 +1,23 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using AutoStep.Extensions.Abstractions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
 namespace AutoStep.Web
 {
-    public class Browser : IDisposable
+    public interface IBrowser : IDisposable
+    {
+        public IWebDriver Driver { get; }
+
+        void Initialise();
+
+        Task<bool> WaitForPageReady(CancellationToken cancellationToken);
+    }
+
+    public class Browser : IBrowser
     {        
         private readonly ILoadedExtensions extensionInfo; 
 
@@ -44,6 +55,12 @@ namespace AutoStep.Web
         }
 
         public IWebDriver Driver => driver!;
+
+        public Task<bool> WaitForPageReady(CancellationToken cancellationToken)
+        {
+            // Page is now ready.
+            return Task.FromResult(true);
+        }
 
         public void Dispose()
         {

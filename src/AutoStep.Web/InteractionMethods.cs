@@ -1,18 +1,17 @@
-﻿using System;
-using System.Linq;
-using AutoStep.Assertion;
-using AutoStep.Definitions;
-using AutoStep.Execution.Interaction;
+﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoStep.Execution.Contexts;
+using AutoStep.Web.ElementChain;
+using Microsoft.Extensions.Logging;
 
 namespace AutoStep.Web
 {
-    public class InteractionMethods
+    public class InteractionMethods : BaseWebMethods
     {
-        private readonly Browser browser;
-
-        public InteractionMethods(Browser browser)
+        public InteractionMethods(IBrowser browser, ILogger<BaseWebMethods> logger, MethodContext methodContext)
+            : base(browser, logger, methodContext)
         {
-            this.browser = browser;
         }
 
         [InteractionMethod("select", Documentation = @"
@@ -20,150 +19,80 @@ namespace AutoStep.Web
             Select elements from the current page, using a CSS selector. For example:
    
             ```
-                # All inputs with the attribute 'button'.
-                select('input[type=button]') 
+            # All inputs with the attribute 'button'.
+            select('input[type=button]') 
                 
-                # All elements with the class 'cssclass'.
-                select('.cssclass')
+            # All elements with the class 'cssclass'.
+            select('.cssclass')
             ```
 
         ")]
-        public void Select(MethodContext ctxt, string selector)
+        public void Select(string selector)
         {
-            var elements = new ElementsQuery(browser);
-            ctxt.Elements(elements);
-
-            elements.AddSelect(selector);
+            Chain(q => q.Select(selector));
         }
 
         [InteractionMethod("withAttribute")]
-        public void WithAttribute(MethodContext ctxt, string attributeName, string attributeValue)
+        public void WithAttribute(string attributeName, string attributeValue)
         {
-            var elements = ctxt.Elements();
-
-            if(elements is null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            elements.AddWithAttribute(attributeName, attributeValue);
-        }
-
-        [InteractionMethod("visible")]
-        public void Visible(MethodContext ctxt)
-        {
-            var elements = ctxt.Elements();
-
-            if (elements is null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            elements.AddVisible();
+            Chain(q => q.WithAttribute(attributeName, attributeValue));
         }
 
         [InteractionMethod("withText")]
-        public void WithText(MethodContext ctxt, string text)
+        public void WithText(string text)
         {
-            var elements = ctxt.Elements();
-
-            if (elements is null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            elements.AddWithText(text);
+            Chain(q => q.WithText(text));
         }
 
-        [InteractionMethod("getInnerText")]
-        public void GetInnerText(MethodContext ctxt)
+        [InteractionMethod("displayed")]
+        public void Displayed()
         {
-            var elements = ctxt.Elements();
+            Chain(q => q.Displayed());
+        }
 
-            if (elements is null)
-            {
-                throw new InvalidOperationException();
-            }
+        [InteractionMethod("assertAttribute")]
+        public async ValueTask AssertAttribute(string attributeName, string attributeValue, CancellationToken cancelToken)
+        {
+            var chain = Chain(q => q.AssertAttribute(attributeName, attributeValue));
 
-            var first = elements.FirstOrDefault();
-
-            if (first is null)
-            {
-                throw new AssertionException("No elements selected to get content from.");
-            }
-
-            ctxt.ChainValue = first.GetProperty("innerText");
+            // Concrete step; evaluate the chain.
+            await chain.EvaluateAsync(cancelToken);
         }
 
         [InteractionMethod("click")]
-        public void Click(MethodContext ctxt)
+        public async ValueTask Click(CancellationToken cancelToken)
         {
-            var elements = ctxt.Elements();
+            var chain = Chain(q => q.Click());
 
-            if (elements is null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            var first = elements.FirstOrDefault();
-
-            if (first is null)
-            {
-                throw new AssertionException("No elements selected to click.");
-            }
-
-            first.Click();
+            // Concrete step; evaluate the chain.
+            await chain.EvaluateAsync(cancelToken);
         }
 
         [InteractionMethod("type")]
-        public void Type(MethodContext ctxt, string text)
+        public async ValueTask Type(string text, CancellationToken cancelToken)
         {
-            var elements = ctxt.Elements();
+            var chain = Chain(q => q.Type(text));
 
-            if (elements is null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            var first = elements.FirstOrDefault();
-
-            if (first is null)
-            {
-                throw new AssertionException("No element available to type into.");
-            }
-
-            first.SendKeys(text);
+            // Concrete step; evaluate the chain.
+            await chain.EvaluateAsync(cancelToken);
         }
 
-        [InteractionMethod("assertExists")]
-        public void AssertExists(MethodContext ctxt)
+        [InteractionMethod("assertAtLeastOne")]
+        public async ValueTask AssertAtLeastOne(CancellationToken cancelToken)
         {
-            var elements = ctxt.Elements();
+            var chain = Chain(q => q.AssertAtLeast(1));
 
-            if (elements is null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            if(!elements.Any())
-            {
-                throw new AssertionException("Elements not found.");
-            }
+            // Concrete step; evaluate the chain.
+            await chain.EvaluateAsync(cancelToken);
         }
 
         [InteractionMethod("assertText")]
-        public void AssertText(MethodContext ctxt, string text)
+        public async ValueTask AssertText(string text, CancellationToken cancelToken)
         {
-            var chainContent = ctxt.ChainValue as string;
+            var chain = Chain(q => q.AssertAttribute("innerText", text));
 
-            if(chainContent is null)
-            {
-                throw new AssertionException("Expression does not result in a string.");
-            }
-            else if (!string.Equals(text, chainContent, StringComparison.CurrentCulture))
-            {
-                throw new AssertionException(string.Format("Found {0}, but expected {1}", chainContent, text));
-            }
+            // Concrete step; evaluate the chain.
+            await chain.EvaluateAsync(cancelToken);
         }
     }
 }

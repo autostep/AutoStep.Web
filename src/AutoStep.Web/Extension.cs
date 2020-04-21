@@ -31,7 +31,7 @@ namespace AutoStep.Web
 
         public void ConfigureExecutionServices(IConfiguration runConfiguration, IServicesBuilder servicesBuilder)
         {
-            servicesBuilder.RegisterPerThreadService<Browser>();
+            servicesBuilder.RegisterPerThreadService<IBrowser, Browser>();
         }
 
         public void Dispose()
