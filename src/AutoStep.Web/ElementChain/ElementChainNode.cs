@@ -4,23 +4,40 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoStep.Elements.Metadata;
+using AutoStep.Execution.Contexts;
 using OpenQA.Selenium;
 
 namespace AutoStep.Web.ElementChain
 {
-    public class ElementChainNode
+    public interface IDescribable
     {
-        public ElementChainNode(Func<IReadOnlyList<IWebElement>, CancellationToken, ValueTask<IReadOnlyList<IWebElement>>> callback, IMethodCallInfo methodCall)
+        MethodContext MethodContext { get; }
+
+        string Descriptor { get; }
+
+        bool ModifiesSet { get; }
+    }
+
+    public class ElementChainNode : IDescribable
+    {
+        public ElementChainNode(Func<IReadOnlyList<IWebElement>, CancellationToken, ValueTask<IReadOnlyList<IWebElement>>> callback, 
+                                string descriptor,
+                                MethodContext methodContext, 
+                                bool modifiesSet)
         {
             Callback = callback;
-            MethodMetadata = methodCall;
+            MethodContext = methodContext;
+            ModifiesSet = modifiesSet;
+            Descriptor = descriptor;
         }
 
         public ElementChainNode(
             ElementChainNode? elementsQueryableNode,
             Func<IReadOnlyList<IWebElement>, CancellationToken, ValueTask<IReadOnlyList<IWebElement>>> callback,
-            IMethodCallInfo methodCall)
-            : this(callback, methodCall)
+            string descriptor,
+            MethodContext methodContext,
+            bool modifiesSet)
+            : this(callback, descriptor, methodContext, modifiesSet)
         {
             ChildNode = elementsQueryableNode;
         }
@@ -31,7 +48,9 @@ namespace AutoStep.Web.ElementChain
         /// </summary>
         public ElementChainNode? ChildNode { get; }
 
-        public Action<IReadOnlyList<IWebElement>, StringBuilder> DescriptionBuilder { get; }
+        public bool ModifiesSet { get; }
+
+        public string Descriptor { get; }
 
         /// <summary>
         /// Contains the set of nodes enumerated to this point (by this node).
@@ -43,6 +62,9 @@ namespace AutoStep.Web.ElementChain
         /// </summary>
         public Func<IReadOnlyList<IWebElement>, CancellationToken, ValueTask<IReadOnlyList<IWebElement>>> Callback { get; }
 
-        public IMethodCallInfo MethodMetadata { get; }
+        /// <summary>
+        /// Gets the method context for the calling method.
+        /// </summary>
+        public MethodContext MethodContext { get; }
     }
 }

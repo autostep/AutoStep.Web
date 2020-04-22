@@ -12,7 +12,7 @@ namespace AutoStep.Web.ElementChain
         {
             if (queryable.AnyPreviousStages)
             {
-                return queryable.AddStage(elements =>
+                return queryable.AddStage($"{nameof(Select)}('{query}')", elements =>
                 {
                     var set = new List<IWebElement>();
 
@@ -27,7 +27,7 @@ namespace AutoStep.Web.ElementChain
             else
             {
                 // No other stages, just search from the root.
-                return queryable.AddStage(elements =>
+                return queryable.AddStage($"{nameof(Select)}('{query}')", elements =>
                 {
                     return queryable.WebDriver.FindElements(By.CssSelector(query));
                 });
@@ -36,127 +36,145 @@ namespace AutoStep.Web.ElementChain
 
         public static IElementChain WithAttribute(this IElementChain queryable, string attributeName, string attributeValue)
         {
-            return queryable.AddStage(elements => elements.Where(x => x.GetAttribute(attributeName) == attributeValue));
+            return queryable.AddStage(
+                $"{nameof(WithAttribute)}({attributeName}, {attributeValue})", 
+                elements => elements.Where(x => x.GetAttribute(attributeName) == attributeValue));
         }
 
         public static IElementChain WithText(this IElementChain queryable, string text)
         {
-            return queryable.AddStage(elements => elements.Where(x => x.Text == text));
+            return queryable.AddStage(
+                $"{nameof(WithText)}({text})",
+                elements => elements.Where(x => x.Text == text));
         }
 
         public static IElementChain Displayed(this IElementChain queryable)
         {
-            return queryable.AddStage(elements => elements.Where(x => x.Displayed));
+            return queryable.AddStage(
+                $"{nameof(Displayed)}()",
+                elements => elements.Where(x => x.Displayed));
         }
 
         public static IElementChain AssertSingle(this IElementChain queryable)
         {
-            var query = queryable.AddStage(elements =>
-            {
-                if (elements.SingleOrDefault() is null)
+            var query = queryable.AddStage(
+                $"{nameof(AssertSingle)}()",
+                elements =>
                 {
-                    throw new AssertionException($"Expecting a single element, but found {elements.Count()}");
-                }
-            });
+                    if (elements.SingleOrDefault() is null)
+                    {
+                        throw new AssertionException($"Expecting a single element, but found {elements.Count()}");
+                    }
+                });
 
             return query;
         }
 
         public static IElementChain AssertAtLeast(this IElementChain queryable, int minimum)
         {
-            var query = queryable.AddStage(elements =>
-            {
-                if (elements.Count < minimum)
+            var query = queryable.AddStage(
+                $"{nameof(AssertAtLeast)}({minimum})",
+                elements =>
                 {
-                    throw new AssertionException($"Expecting at least {minimum} element(s), but found {elements.Count}.");
-                }
-            });
+                    if (elements.Count < minimum)
+                    {
+                        throw new AssertionException($"Expecting at least {minimum} element(s), but found {elements.Count}.");
+                    }
+                });
 
             return query;
         }
 
         public static IElementChain AssertAttribute(this IElementChain queryable, string attributeName, string attributeValue)
         {
-            var query = queryable.AddStage(elements =>
-            {
-                var firstElement = elements.FirstOrDefault();
-
-                if (firstElement is null)
+            var query = queryable.AddStage(
+                $"{nameof(AssertAttribute)}('{attributeName}', '{attributeValue}')",
+                elements =>
                 {
-                    throw new AssertionException($"Expecting an element to assert the {attributeName}, but no elements found.");
-                }
+                    var firstElement = elements.FirstOrDefault();
 
-                var actualAttributeValue = firstElement.GetAttribute(attributeName);
+                    if (firstElement is null)
+                    {
+                        throw new AssertionException($"Expecting an element to assert the {attributeName}, but no elements found.");
+                    }
 
-                if (actualAttributeValue != attributeValue)
-                {
-                    throw new AssertionException($"Expecting {attributeValue} but found {actualAttributeValue}.");
-                }
-            });
+                    var actualAttributeValue = firstElement.GetAttribute(attributeName);
+
+                    if (actualAttributeValue != attributeValue)
+                    {
+                        throw new AssertionException($"Expecting {attributeValue} but found {actualAttributeValue}.");
+                    }
+                });
 
             return query;
         }
 
         public static IElementChain First(this IElementChain queryable)
         {
-            var query = queryable.AddStage(elements =>
-            {
-                var element = elements.FirstOrDefault();
-
-                if (element is null)
+            var query = queryable.AddStage(
+                $"{nameof(First)}()",
+                elements =>
                 {
-                    throw new AssertionException($"Expecting an element, but found none.");
-                }
-            });
+                    var element = elements.FirstOrDefault();
+
+                    if (element is null)
+                    {
+                        throw new AssertionException($"Expecting an element, but found none.");
+                    }
+                });
 
             return query;
         }
 
         public static IElementChain Click(this IElementChain queryable)
         {
-            var query = queryable.AddStage(elements =>
-            {
-                var firstElement = elements.FirstOrDefault();
-
-                if (firstElement is null)
+            var query = queryable.AddStage(
+                $"{nameof(Click)}()",
+                elements =>
                 {
-                    throw new AssertionException($"Expecting an element to click, but no elements found.");
-                }
+                    var firstElement = elements.FirstOrDefault();
 
-                if (!firstElement.Displayed)
-                {
-                    throw new AssertionException($"Element is not displayed. Cannot click on an invisible element.");
-                }
+                    if (firstElement is null)
+                    {
+                        throw new AssertionException($"Expecting an element to click, but no elements found.");
+                    }
 
-                firstElement.Click();
-            });
+                    if (!firstElement.Displayed)
+                    {
+                        throw new AssertionException($"Element is not displayed. Cannot click on an invisible element.");
+                    }
+
+                    firstElement.Click();
+                });
 
             return query;
         }
 
         public static IElementChain Type(this IElementChain queryable, string text)
         {
-            var query = queryable.AddStage(elements =>
-            {
-                var firstElement = elements.FirstOrDefault();
+            var query = queryable.AddStage(
+                $"{nameof(Type)}('{text}')",
+                elements =>
+                {
+                    var firstElement = elements.FirstOrDefault();
 
-                if (firstElement is null)
-                {
-                    // Type on the page.
-                    var actions = new Actions(queryable.WebDriver);
-                    actions.SendKeys(text);
-                    actions.Perform();
-                }
-                else
-                {
-                    if (!firstElement.Enabled)
+                    if (firstElement is null)
                     {
-                        throw new AssertionException($"Element is not enabled. Cannot type in an invisible element.");
+                        // Type on the page.
+                        var actions = new Actions(queryable.WebDriver);
+                        actions.SendKeys(text);
+                        actions.Perform();
                     }
+                    else
+                    {
+                        if (!firstElement.Enabled)
+                        {
+                            throw new AssertionException($"Element is not enabled. Cannot type in an invisible element.");
+                        }
 
-                    firstElement.SendKeys(text);
-                }
-            });
+                        firstElement.SendKeys(text);
+                    }
+                });
 
             return query;
         }

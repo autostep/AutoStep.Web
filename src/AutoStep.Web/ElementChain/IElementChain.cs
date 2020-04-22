@@ -15,15 +15,14 @@ namespace AutoStep.Web.ElementChain
 
         public ElementChainNode? LastNode { get; }
 
-        IElementChain AddStage(
-            Func<IReadOnlyList<IWebElement>, CancellationToken, ValueTask<IReadOnlyList<IWebElement>>> callback);
+        IElementChain AddStage(string descriptor, Func<IReadOnlyList<IWebElement>, CancellationToken, ValueTask<IReadOnlyList<IWebElement>>> callback);
 
-        IElementChain AddStage(
-            Action<IReadOnlyList<IWebElement>> callback);
+        IElementChain AddStage(string descriptor, Action<IReadOnlyList<IWebElement>> callback);
 
-        IElementChain AddStage(
-            Func<IReadOnlyList<IWebElement>, IEnumerable<IWebElement>> callback);
+        IElementChain AddStage(string descriptor, Func<IReadOnlyList<IWebElement>, IEnumerable<IWebElement>> callback);
 
         ValueTask<IReadOnlyList<IWebElement>> EvaluateAsync(CancellationToken cancelToken);
+
+        string Describe();
     }
 }

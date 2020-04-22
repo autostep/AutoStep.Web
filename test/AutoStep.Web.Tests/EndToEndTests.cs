@@ -12,14 +12,20 @@ using AutoStep.Extensions.Abstractions;
 using AutoStep.Language;
 using AutoStep.Projects;
 using AutoStep.Projects.Files;
+using AutoStep.Tests.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace AutoStep.Web.Tests
 {
-    public class EndToEndTests
+    public class EndToEndTests : LoggingTestBase
     {
+        public EndToEndTests(ITestOutputHelper outputHelper) : base(outputHelper)
+        {
+        }
+
         [Fact]
         public async Task RunSimpleTest()
         {
@@ -62,7 +68,7 @@ namespace AutoStep.Web.Tests
 
             testRun.Events.Add(result);
 
-            await testRun.ExecuteAsync(new NullLoggerFactory(), CancellationToken.None, (cfg, s) => {
+            await testRun.ExecuteAsync(LogFactory, CancellationToken.None, (cfg, s) => {
 
                 s.RegisterInstance<ILoadedExtensions>(new FakeLoadedExtensions());
 

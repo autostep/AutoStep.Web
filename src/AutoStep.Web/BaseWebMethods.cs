@@ -15,7 +15,7 @@ namespace AutoStep.Web
             Browser = browser;
             Logger = logger;
             MethodContext = methodContext;
-            chainContext = new Lazy<ElementChainContext>(() => new ElementChainContext(Browser, Logger, new ElementChainOptions
+            chainContext = new Lazy<ElementChainContext>(() => new ElementChainContext(Browser, Logger, new ElementChainDescriber(), new ElementChainOptions
             {
                 RetryDelayMs = 200,
                 PageWaitTimeoutMs = 100,
@@ -35,11 +35,11 @@ namespace AutoStep.Web
 
             if (MethodContext.ChainValue is ElementChainNode lastNode)
             {
-                chain = new ElementChainBuilder(lastNode, MethodContext.MethodCall!, chainContext.Value);
+                chain = new ElementChainBuilder(lastNode, MethodContext, chainContext.Value);
             }
             else
             {
-                chain = new ElementChainBuilder(null, MethodContext.MethodCall!, chainContext.Value);
+                chain = new ElementChainBuilder(null, MethodContext, chainContext.Value);
             }
 
             if (buildCallback is object)

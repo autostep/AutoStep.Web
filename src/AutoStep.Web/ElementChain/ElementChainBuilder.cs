@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoStep.Elements.Metadata;
+using AutoStep.Execution.Contexts;
 using AutoStep.Web.ElementChain;
 using OpenQA.Selenium;
 
@@ -14,43 +14,42 @@ namespace AutoStep.Web.Queryable
     {
         private readonly ElementChainContext context;
 
-        public ElementChainBuilder(ElementChainNode? node, IMethodCallInfo methodInfo, ElementChainContext queryableContext)
+        public ElementChainBuilder(ElementChainNode? node, MethodContext methodContext, ElementChainContext queryableContext)
         {
             LastNode = node;
-            ActiveMethodCall = methodInfo;
+            ActiveMethodContext = methodContext;
             context = queryableContext;
         }
 
         public ElementChainNode? LastNode { get; }
 
-        public IMethodCallInfo ActiveMethodCall { get; }
+        public MethodContext ActiveMethodContext { get; }
 
         public IWebDriver WebDriver => context.Browser.Driver;
 
         public bool AnyPreviousStages => LastNode != null;
 
-        public IElementChain AddStage(
-            Func<IReadOnlyList<IWebElement>, CancellationToken, ValueTask<IReadOnlyList<IWebElement>>> callback)
+        public IElementChain AddStage(string descriptor, Func<IReadOnlyList<IWebElement>, CancellationToken, ValueTask<IReadOnlyList<IWebElement>>> callback)
         {
-            return new ElementChainBuilder(new ElementChainNode(LastNode, callback, ActiveMethodCall), ActiveMethodCall, context);
+            return new ElementChainBuilder(new ElementChainNode(LastNode, callback, descriptor, ActiveMethodContext, modifiesSet: true), ActiveMethodContext, context);
         }
 
-        public IElementChain AddStage(Func<IReadOnlyList<IWebElement>, IEnumerable<IWebElement>> callback)
+        public IElementChain AddStage(string descriptor, Func<IReadOnlyList<IWebElement>, IEnumerable<IWebElement>> callback)
         {
-            return AddStage((webElements, cancelToken) =>
+            return AddStage(descriptor, (webElements, cancelToken) =>
             {
                 // Need to evaluate at each stage.
                 return new ValueTask<IReadOnlyList<IWebElement>>(callback(webElements).ToList());
             });
         }
 
-        public IElementChain AddStage(Action<IReadOnlyList<IWebElement>> callback)
+        public IElementChain AddStage(string descriptor, Action<IReadOnlyList<IWebElement>> callback)
         {
-            return AddStage(el =>
-            {
-                callback(el);
-                return el;
-            });
+            return new ElementChainBuilder(new ElementChainNode(LastNode, (webElements, cancelToken) => 
+            { 
+                callback(webElements);
+                return new ValueTask<IReadOnlyList<IWebElement>>(webElements);
+            }, descriptor, ActiveMethodContext, modifiesSet: false), ActiveMethodContext, context);
         }
 
         public async ValueTask<IReadOnlyList<IWebElement>> EvaluateAsync(CancellationToken cancelToken)
@@ -59,10 +58,15 @@ namespace AutoStep.Web.Queryable
 
             if (LastNode is object)
             {
-                await evaluator.Evaluate(LastNode, cancelToken);
+                return await evaluator.Evaluate(LastNode, cancelToken);
             }
 
-            return new Collection<IWebElement>();
+            return Array.Empty<IWebElement>();
+        }
+
+        public string Describe()
+        {
+            return context.Describer.Describe(LastNode);
         }
     }
 }

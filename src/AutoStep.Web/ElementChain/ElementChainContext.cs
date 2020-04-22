@@ -5,10 +5,11 @@ namespace AutoStep.Web.ElementChain
 {
     internal class ElementChainContext
     {
-        public ElementChainContext(IBrowser browser, ILogger logger, ElementChainOptions options)
+        public ElementChainContext(IBrowser browser, ILogger logger, IElementChainDescriber describer, ElementChainOptions options)
         {
             Browser = browser;
             Logger = logger;
+            Describer = describer;
             Options = options;
         }
 
@@ -17,5 +18,7 @@ namespace AutoStep.Web.ElementChain
         public ILogger Logger { get; }
 
         public ElementChainOptions Options { get; }
+
+        public IElementChainDescriber Describer { get; }
     }
 }
