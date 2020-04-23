@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoStep.Tests.Utils;
+using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
-namespace AutoStep.Tests.Utils
+namespace AutoStep.Extensions.Testing
 {
-    public static class TestLogFactory
+    internal static class TestLogFactory
     {
         public static ILoggerFactory Create(ITestOutputHelper outputHelper)
         {

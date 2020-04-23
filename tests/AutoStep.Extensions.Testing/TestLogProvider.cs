@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using AutoStep.Extensions.Testing;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace AutoStep.Tests.Utils
 {
-    public class TestLogProvider : ILoggerProvider
+    internal class TestLogProvider : ILoggerProvider
     {
         private readonly ITestOutputHelper outputHelper;
 

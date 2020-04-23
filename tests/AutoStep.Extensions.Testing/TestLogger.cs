@@ -1,9 +1,10 @@
 ﻿using System;
+using AutoStep.Tests.Utils;
 using Microsoft.Extensions.Logging;
 
-namespace AutoStep.Tests.Utils
+namespace AutoStep.Extensions.Testing
 {
-    public class TestLogger : ILogger
+    internal class TestLogger : ILogger
     {
         private readonly TestLogProvider provider;
         private readonly string name;
@@ -26,7 +27,7 @@ namespace AutoStep.Tests.Utils
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            provider.Log<TState>(name, logLevel, eventId, state, exception, formatter);
+            provider.Log(name, logLevel, eventId, state, exception, formatter);
         }
     }
 }

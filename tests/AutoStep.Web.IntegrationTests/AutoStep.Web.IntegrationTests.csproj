@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -9,17 +9,16 @@
   <ItemGroup>
     <PackageReference Include="AutoStep" Version="1.0.0-develop.300" />
     <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.40" />
+    <PackageReference Include="Selenium.Chrome.WebDriver" Version="*" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
-    <PackageReference Include="FluentAssertions" Version="5.10.0" />
-    <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
-    <PackageReference Include="coverlet.collector" Version="1.0.1" />
+    <PackageReference Include="coverlet.collector" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AutoStep.Web\AutoStep.Web.csproj" />
-    <ProjectReference Include="..\..\tests\AutoStep.Extensions.Testing\AutoStep.Extensions.Testing.csproj" />
+    <ProjectReference Include="..\AutoStep.Extensions.Testing\AutoStep.Extensions.Testing.csproj" />
   </ItemGroup>
 
 </Project>

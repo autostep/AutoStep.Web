@@ -1,9 +1,7 @@
 ﻿using Xunit.Abstractions;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Concurrent;
 
-namespace AutoStep.Tests.Utils
+namespace AutoStep.Extensions.Testing
 {
     public class LoggingTestBase
     {

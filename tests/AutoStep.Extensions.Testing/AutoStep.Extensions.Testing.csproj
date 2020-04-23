@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoStep" Version="1.0.0-develop.299" />
+    <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.40" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+  </ItemGroup>
+  
+</Project>

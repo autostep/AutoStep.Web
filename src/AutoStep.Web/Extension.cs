@@ -3,6 +3,7 @@ using AutoStep.Execution;
 using AutoStep.Execution.Dependency;
 using AutoStep.Extensions;
 using AutoStep.Projects;
+using AutoStep.Web.Chain;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -32,6 +33,8 @@ namespace AutoStep.Web
         public void ConfigureExecutionServices(IConfiguration runConfiguration, IServicesBuilder servicesBuilder)
         {
             servicesBuilder.RegisterPerThreadService<IBrowser, Browser>();
+            servicesBuilder.RegisterPerResolveService<IElementChainExecutor, ChainExecutor>();
+            servicesBuilder.RegisterSingleton<IChainDescriber, ChainDescriber>();
         }
 
         public void Dispose()

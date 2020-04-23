@@ -4,15 +4,15 @@ using AutoStep.Assertion;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 
-namespace AutoStep.Web.ElementChain
+namespace AutoStep.Web.Chain
 {
     public static class ElementChainExtensions
     {
         public static IElementChain Select(this IElementChain queryable, string query)
         {
-            if (queryable.AnyPreviousStages)
+            if (queryable.AnyPreviousNodes)
             {
-                return queryable.AddStage($"{nameof(Select)}('{query}')", elements =>
+                return queryable.AddNode($"{nameof(Select)}('{query}')", elements =>
                 {
                     var set = new List<IWebElement>();
 
@@ -27,37 +27,37 @@ namespace AutoStep.Web.ElementChain
             else
             {
                 // No other stages, just search from the root.
-                return queryable.AddStage($"{nameof(Select)}('{query}')", elements =>
+                return queryable.AddNode($"{nameof(Select)}('{query}')", (elements, browser) =>
                 {
-                    return queryable.WebDriver.FindElements(By.CssSelector(query));
+                    return browser.Driver.FindElements(By.CssSelector(query));
                 });
             }
         }
 
         public static IElementChain WithAttribute(this IElementChain queryable, string attributeName, string attributeValue)
         {
-            return queryable.AddStage(
-                $"{nameof(WithAttribute)}({attributeName}, {attributeValue})", 
+            return queryable.AddNode(
+                $"{nameof(WithAttribute)}({attributeName}, {attributeValue})",
                 elements => elements.Where(x => x.GetAttribute(attributeName) == attributeValue));
         }
 
         public static IElementChain WithText(this IElementChain queryable, string text)
         {
-            return queryable.AddStage(
+            return queryable.AddNode(
                 $"{nameof(WithText)}({text})",
                 elements => elements.Where(x => x.Text == text));
         }
 
         public static IElementChain Displayed(this IElementChain queryable)
         {
-            return queryable.AddStage(
+            return queryable.AddNode(
                 $"{nameof(Displayed)}()",
                 elements => elements.Where(x => x.Displayed));
         }
 
         public static IElementChain AssertSingle(this IElementChain queryable)
         {
-            var query = queryable.AddStage(
+            var query = queryable.AddNode(
                 $"{nameof(AssertSingle)}()",
                 elements =>
                 {
@@ -72,7 +72,7 @@ namespace AutoStep.Web.ElementChain
 
         public static IElementChain AssertAtLeast(this IElementChain queryable, int minimum)
         {
-            var query = queryable.AddStage(
+            var query = queryable.AddNode(
                 $"{nameof(AssertAtLeast)}({minimum})",
                 elements =>
                 {
@@ -87,7 +87,7 @@ namespace AutoStep.Web.ElementChain
 
         public static IElementChain AssertAttribute(this IElementChain queryable, string attributeName, string attributeValue)
         {
-            var query = queryable.AddStage(
+            var query = queryable.AddNode(
                 $"{nameof(AssertAttribute)}('{attributeName}', '{attributeValue}')",
                 elements =>
                 {
@@ -111,7 +111,7 @@ namespace AutoStep.Web.ElementChain
 
         public static IElementChain First(this IElementChain queryable)
         {
-            var query = queryable.AddStage(
+            var query = queryable.AddNode(
                 $"{nameof(First)}()",
                 elements =>
                 {
@@ -128,7 +128,7 @@ namespace AutoStep.Web.ElementChain
 
         public static IElementChain Click(this IElementChain queryable)
         {
-            var query = queryable.AddStage(
+            var query = queryable.AddNode(
                 $"{nameof(Click)}()",
                 elements =>
                 {
@@ -152,16 +152,16 @@ namespace AutoStep.Web.ElementChain
 
         public static IElementChain Type(this IElementChain queryable, string text)
         {
-            var query = queryable.AddStage(
+            var query = queryable.AddNode(
                 $"{nameof(Type)}('{text}')",
-                elements =>
+                (elements, browser) =>
                 {
                     var firstElement = elements.FirstOrDefault();
 
                     if (firstElement is null)
                     {
                         // Type on the page.
-                        var actions = new Actions(queryable.WebDriver);
+                        var actions = new Actions(browser.Driver);
                         actions.SendKeys(text);
                         actions.Perform();
                     }

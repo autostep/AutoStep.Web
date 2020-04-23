@@ -14,13 +14,12 @@ namespace AutoStep.Web
 
         void Initialise();
 
-        Task<bool> WaitForPageReady(CancellationToken cancellationToken);
+        ValueTask<bool> WaitForPageReady(CancellationToken cancellationToken);
     }
 
     public class Browser : IBrowser
-    {        
-        private readonly ILoadedExtensions extensionInfo; 
-
+    {
+        private readonly ILoadedExtensions extensionInfo;
         private IWebDriver? driver;
         private ChromeDriverService chromeDriverService;
 
@@ -56,10 +55,10 @@ namespace AutoStep.Web
 
         public IWebDriver Driver => driver!;
 
-        public Task<bool> WaitForPageReady(CancellationToken cancellationToken)
+        public ValueTask<bool> WaitForPageReady(CancellationToken cancellationToken)
         {
             // Page is now ready.
-            return Task.FromResult(true);
+            return new ValueTask<bool>(true);
         }
 
         public void Dispose()

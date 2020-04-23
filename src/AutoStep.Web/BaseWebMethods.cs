@@ -1,55 +1,67 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using AutoStep.Execution.Contexts;
-using AutoStep.Web.ElementChain;
-using AutoStep.Web.Queryable;
+using AutoStep.Web.Chain;
 using Microsoft.Extensions.Logging;
+using OpenQA.Selenium;
 
 namespace AutoStep.Web
 {
     public class BaseWebMethods
     {
-        private readonly Lazy<ElementChainContext> chainContext;
+        private readonly ElementChainOptions chainOptions;
+        private readonly IElementChainExecutor evaluator;
 
-        public BaseWebMethods(IBrowser browser, ILogger logger, MethodContext methodContext)
+        public BaseWebMethods(IBrowser browser, ILogger logger, IElementChainExecutor evaluator, MethodContext methodContext)
         {
             Browser = browser;
             Logger = logger;
+            this.evaluator = evaluator;
             MethodContext = methodContext;
-            chainContext = new Lazy<ElementChainContext>(() => new ElementChainContext(Browser, Logger, new ElementChainDescriber(), new ElementChainOptions
+            chainOptions = new ElementChainOptions
             {
                 RetryDelayMs = 200,
                 PageWaitTimeoutMs = 100,
                 TotalWaitTimeoutMs = 2000
-            }));
+            };
         }
 
         public IBrowser Browser { get; }
 
         public ILogger Logger { get; }
 
+        public IWebDriver WebDriver => Browser.Driver;
+
         public MethodContext MethodContext { get; }
 
-        public IElementChain Chain(Func<IElementChain, IElementChain>? buildCallback = null)
+        protected IElementChain AddToChain(Func<IElementChain, IElementChain>? buildCallback = null)
         {
             IElementChain chain;
 
-            if (MethodContext.ChainValue is ElementChainNode lastNode)
+            if (MethodContext.ChainValue is DeclarationNode lastNode)
             {
-                chain = new ElementChainBuilder(lastNode, MethodContext, chainContext.Value);
+                chain = new ElementChain(lastNode, MethodContext, chainOptions);
             }
             else
             {
-                chain = new ElementChainBuilder(null, MethodContext, chainContext.Value);
+                chain = new ElementChain(null, MethodContext, chainOptions);
             }
 
             if (buildCallback is object)
             {
                 chain = buildCallback(chain);
 
-                MethodContext.ChainValue = chain.LastNode;
+                MethodContext.ChainValue = chain.LeafNode;
             }
 
             return chain;
+        }
+
+        protected ValueTask<IReadOnlyList<IWebElement>> ExecuteChainAsync(IElementChain chain, CancellationToken cancelToken)
+        {
+            return evaluator.ExecuteAsync(chain, cancelToken);
         }
     }
 }

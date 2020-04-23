@@ -5,20 +5,19 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoStep.Execution.Contexts;
-using AutoStep.Execution.Dependency;
 using AutoStep.Execution.Events;
 using AutoStep.Extensions;
 using AutoStep.Extensions.Abstractions;
+using AutoStep.Extensions.Testing;
 using AutoStep.Language;
 using AutoStep.Projects;
 using AutoStep.Projects.Files;
-using AutoStep.Tests.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AutoStep.Web.Tests
+namespace AutoStep.Web.IntegrationTests
 {
     public class EndToEndTests : LoggingTestBase
     {
@@ -68,8 +67,8 @@ namespace AutoStep.Web.Tests
 
             testRun.Events.Add(result);
 
-            await testRun.ExecuteAsync(LogFactory, CancellationToken.None, (cfg, s) => {
-
+            await testRun.ExecuteAsync(LogFactory, CancellationToken.None, (cfg, s) =>
+            {
                 s.RegisterInstance<ILoadedExtensions>(new FakeLoadedExtensions());
 
                 extension.ConfigureExecutionServices(cfg, s);

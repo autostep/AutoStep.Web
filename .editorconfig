@@ -133,3 +133,6 @@ dotnet_diagnostic.SA1204.severity = none
 
 # CA1032: Implement standard exception constructors
 dotnet_diagnostic.CA1032.severity = none
+
+# SA1118: Parameter should not span multiple lines - Need to be able to put big blocks of text in attributes.
+dotnet_diagnostic.SA1118.severity = none

@@ -2,15 +2,15 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoStep.Execution.Contexts;
-using AutoStep.Web.ElementChain;
+using AutoStep.Web.Chain;
 using Microsoft.Extensions.Logging;
 
 namespace AutoStep.Web
 {
     public class InteractionMethods : BaseWebMethods
     {
-        public InteractionMethods(IBrowser browser, ILogger<BaseWebMethods> logger, MethodContext methodContext)
-            : base(browser, logger, methodContext)
+        public InteractionMethods(IBrowser browser, ILogger<BaseWebMethods> logger, IElementChainExecutor elementEvaluator, MethodContext methodContext)
+            : base(browser, logger, elementEvaluator, methodContext)
         {
         }
 
@@ -25,74 +25,73 @@ namespace AutoStep.Web
             # All elements with the class 'cssclass'.
             select('.cssclass')
             ```
-
         ")]
         public void Select(string selector)
         {
-            Chain(q => q.Select(selector));
+            AddToChain(q => q.Select(selector));
         }
 
         [InteractionMethod("withAttribute")]
         public void WithAttribute(string attributeName, string attributeValue)
         {
-            Chain(q => q.WithAttribute(attributeName, attributeValue));
+            AddToChain(q => q.WithAttribute(attributeName, attributeValue));
         }
 
         [InteractionMethod("withText")]
         public void WithText(string text)
         {
-            Chain(q => q.WithText(text));
+            AddToChain(q => q.WithText(text));
         }
 
         [InteractionMethod("displayed")]
         public void Displayed()
         {
-            Chain(q => q.Displayed());
+            AddToChain(q => q.Displayed());
         }
 
         [InteractionMethod("assertAttribute")]
         public async ValueTask AssertAttribute(string attributeName, string attributeValue, CancellationToken cancelToken)
         {
-            var chain = Chain(q => q.AssertAttribute(attributeName, attributeValue));
+            var chain = AddToChain(q => q.AssertAttribute(attributeName, attributeValue));
 
-            // Concrete step; evaluate the chain.
-            await chain.EvaluateAsync(cancelToken);
+            // Concrete method; execute chain.
+            await ExecuteChainAsync(chain, cancelToken);
         }
 
         [InteractionMethod("click")]
         public async ValueTask Click(CancellationToken cancelToken)
         {
-            var chain = Chain(q => q.Click());
+            var chain = AddToChain(q => q.Click());
 
-            // Concrete step; evaluate the chain.
-            await chain.EvaluateAsync(cancelToken);
+            // Concrete method; execute chain.
+            await ExecuteChainAsync(chain, cancelToken);
         }
 
         [InteractionMethod("type")]
         public async ValueTask Type(string text, CancellationToken cancelToken)
         {
-            var chain = Chain(q => q.Type(text));
+            var chain = AddToChain(q => q.Type(text));
 
-            // Concrete step; evaluate the chain.
-            await chain.EvaluateAsync(cancelToken);
+            // Concrete method; execute chain.
+            await ExecuteChainAsync(chain, cancelToken);
         }
 
         [InteractionMethod("assertAtLeastOne")]
         public async ValueTask AssertAtLeastOne(CancellationToken cancelToken)
         {
-            var chain = Chain(q => q.AssertAtLeast(1));
+            var chain = AddToChain(q => q.AssertAtLeast(1));
 
-            // Concrete step; evaluate the chain.
-            await chain.EvaluateAsync(cancelToken);
+            // Concrete method; execute chain.
+            await ExecuteChainAsync(chain, cancelToken);
         }
 
         [InteractionMethod("assertText")]
         public async ValueTask AssertText(string text, CancellationToken cancelToken)
         {
-            var chain = Chain(q => q.AssertAttribute("innerText", text));
+            var chain = AddToChain(q => q.AssertAttribute("innerText", text));
 
-            // Concrete step; evaluate the chain.
-            await chain.EvaluateAsync(cancelToken);
+            // Concrete method; execute chain.
+            await ExecuteChainAsync(chain, cancelToken);
         }
     }
 }
