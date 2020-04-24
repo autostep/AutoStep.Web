@@ -14,7 +14,7 @@ namespace AutoStep.Web.Chain
         "Design",
         "CA1062:Validate arguments of public methods",
         Justification = "Analyser doesn't understand that the AssertArguments checks everything.")]
-    public static class ElementChainDeclarationExtensions
+    public static class ElementChainNodeExtensions
     {
         /// <summary>
         /// Adds a node to the chain (and returns a new chain).
@@ -45,6 +45,8 @@ namespace AutoStep.Web.Chain
         /// <returns>A new <see cref="IElementChain"/> representing the previous chain plus the new node.</returns>
         public static IElementChain AddNode(this IElementChain chain, string descriptor, Func<IReadOnlyList<IWebElement>, CancellationToken, ValueTask<IEnumerable<IWebElement>>> callback)
         {
+            AssertArguments(chain, descriptor, callback);
+
             return chain.AddNode(descriptor, async (webElements, browser, cancelToken) =>
             {
                 var results = await callback(webElements, cancelToken);
@@ -63,6 +65,8 @@ namespace AutoStep.Web.Chain
         /// <returns>A new <see cref="IElementChain"/> representing the previous chain plus the new node.</returns>
         public static IElementChain AddNode(this IElementChain chain, string descriptor, Func<IReadOnlyList<IWebElement>, IBrowser, IEnumerable<IWebElement>> callback)
         {
+            AssertArguments(chain, descriptor, callback);
+
             return chain.AddNode(descriptor, (webElements, browser, cancelToken) =>
             {
                 // Need to evaluate at each stage.
@@ -79,6 +83,8 @@ namespace AutoStep.Web.Chain
         /// <returns>A new <see cref="IElementChain"/> representing the previous chain plus the new node.</returns>
         public static IElementChain AddNode(this IElementChain chain, string descriptor, Func<IReadOnlyList<IWebElement>, IEnumerable<IWebElement>> callback)
         {
+            AssertArguments(chain, descriptor, callback);
+
             return chain.AddNode(descriptor, (webElements, browser, cancelToken) =>
             {
                 // Need to evaluate at each stage.
@@ -95,6 +101,8 @@ namespace AutoStep.Web.Chain
         /// <returns>A new <see cref="IElementChain"/> representing the previous chain plus the new node.</returns>
         public static IElementChain AddNode(this IElementChain chain, string descriptor, Action<IReadOnlyList<IWebElement>, IBrowser> callback)
         {
+            AssertArguments(chain, descriptor, callback);
+
             return chain.AddNode(descriptor, (webElements, browser, cancelToken) =>
             {
                 // Need to evaluate at each stage.
@@ -113,6 +121,8 @@ namespace AutoStep.Web.Chain
         /// <returns>A new <see cref="IElementChain"/> representing the previous chain plus the new node.</returns>
         public static IElementChain AddNode(this IElementChain chain, string descriptor, Action<IReadOnlyList<IWebElement>> callback)
         {
+            AssertArguments(chain, descriptor, callback);
+
             return chain.AddNode(descriptor, (webElements, browser, cancelToken) =>
             {
                 // Need to evaluate at each stage.
@@ -124,6 +134,8 @@ namespace AutoStep.Web.Chain
 
         private static void AssertArguments(IElementChain chain, string descriptor, Delegate callback)
         {
+            AssertArguments(chain, descriptor, callback);
+
             if (chain is null)
             {
                 throw new ArgumentNullException(nameof(chain));
@@ -131,7 +143,7 @@ namespace AutoStep.Web.Chain
 
             if (string.IsNullOrWhiteSpace(descriptor))
             {
-                throw new ArgumentException("Descriptor cannot be null or whitespace.", nameof(descriptor));
+                throw new ArgumentException(ElementChainMessages.BlankStringParameter, nameof(descriptor));
             }
 
             if (callback is null)

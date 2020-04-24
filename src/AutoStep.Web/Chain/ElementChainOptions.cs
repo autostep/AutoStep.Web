@@ -1,5 +1,8 @@
 ﻿namespace AutoStep.Web.Chain
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ElementChainOptions
     {
         public int RetryDelayMs { get; set; }

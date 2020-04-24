@@ -72,7 +72,7 @@ namespace AutoStep.Web.Chain
         {
             if (string.IsNullOrEmpty(descriptor))
             {
-                throw new ArgumentException(ElementChainMessages.BlankDescriptor, nameof(descriptor));
+                throw new ArgumentException(ElementChainMessages.BlankStringParameter, nameof(descriptor));
             }
 
             if (callback is null)
@@ -90,7 +90,7 @@ namespace AutoStep.Web.Chain
         {
             if (string.IsNullOrEmpty(descriptor))
             {
-                throw new ArgumentException(ElementChainMessages.BlankDescriptor, nameof(descriptor));
+                throw new ArgumentException(ElementChainMessages.BlankStringParameter, nameof(descriptor));
             }
 
             if (callback is null)

@@ -61,11 +61,11 @@ namespace AutoStep.Web.Chain {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Descriptor cannot be null or whitespace..
+        ///   Looks up a localized string similar to Parameter cannot be null or whitespace..
         /// </summary>
-        internal static string BlankDescriptor {
+        internal static string BlankStringParameter {
             get {
-                return ResourceManager.GetString("BlankDescriptor", resourceCulture);
+                return ResourceManager.GetString("BlankStringParameter", resourceCulture);
             }
         }
     }
