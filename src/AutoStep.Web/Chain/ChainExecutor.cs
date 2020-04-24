@@ -32,6 +32,10 @@ namespace AutoStep.Web.Chain
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Design",
+            "CA1031:Do not catch general exception types",
+            Justification = "Need to capture any and all exceptions that might arise from a chain. Actual exception is thrown via the ExceptionDispatchInfo.")]
         public async ValueTask<IReadOnlyList<IWebElement>> ExecuteAsync(IElementChain chain, CancellationToken cancellationToken)
         {
             var options = chain.Options;
@@ -57,9 +61,9 @@ namespace AutoStep.Web.Chain
                     if (lastException is object)
                     {
                         // The last attempt failed.
-                        logger.LogWarning("Element Chain Failure on attempt {0}", attemptCount);
+                        logger.LogWarning(ChainExecutorMessages.ElementChainAttemptFailure, attemptCount);
                         logger.LogWarning(describer.DescribeExecution(executionSet, false));
-                        logger.LogWarning("Will retry in {0} ms.", options.RetryDelayMs);
+                        logger.LogWarning(ChainExecutorMessages.WillRetry, options.RetryDelayMs);
 
                         // Give it a moment (the configured amount).
                         await Task.Delay(options.RetryDelayMs, cancellationToken).ConfigureAwait(false);
@@ -109,11 +113,11 @@ namespace AutoStep.Web.Chain
                 // Track the elements found at each node, including the start point, grouped by associated method info.
                 if (lastException is OperationCanceledException)
                 {
-                    logger.LogWarning("Element Chain Cancellation");
+                    logger.LogWarning(ChainExecutorMessages.ElementChainCancellation);
                 }
                 else
                 {
-                    logger.LogError("Element Chain Error:");
+                    logger.LogError(ChainExecutorMessages.ElementChainError);
 
                     logger.LogError(describer.DescribeExecution(executionSet, true));
                 }
@@ -124,11 +128,15 @@ namespace AutoStep.Web.Chain
                     ExceptionDispatchInfo.Capture(lastException).Throw();
                 }
             }
-            else if (logger.IsEnabled(LogLevel.Debug))
+            else
             {
                 // At debug level, log successful chains as well.
-                logger.LogDebug("Element Chain Success:");
-                logger.LogDebug(describer.DescribeExecution(executionSet, true));
+                logger.LogDebug(ChainExecutorMessages.ElementChainSuccess);
+
+                if (logger.IsEnabled(LogLevel.Debug))
+                {
+                    logger.LogDebug(describer.DescribeExecution(executionSet, true));
+                }
             }
 
             return results;
@@ -163,7 +171,7 @@ namespace AutoStep.Web.Chain
         {
             IReadOnlyList<IWebElement> elements;
 
-            var activeNode = startPoint;
+            LinkedListNode<ExecutionNode>? activeNode = startPoint;
 
             if (useElementsAtStart && startPoint.Value.CachedElements is object)
             {

@@ -117,19 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ElementChainAttemptFailure" xml:space="preserve">
-    <value>Element Chain Failure on attempt {0}.</value>
-  </data>
-  <data name="ElementChainCancellation" xml:space="preserve">
-    <value>Element Chain Cancellation.</value>
-  </data>
-  <data name="ElementChainError" xml:space="preserve">
-    <value>Element Chain Error.</value>
-  </data>
-  <data name="ElementChainSuccess" xml:space="preserve">
-    <value>Element Chain Success.</value>
-  </data>
-  <data name="WillRetry" xml:space="preserve">
-    <value>Will retry in {0} ms.</value>
+  <data name="BlankDescriptor" xml:space="preserve">
+    <value>Descriptor cannot be null or whitespace.</value>
   </data>
 </root>

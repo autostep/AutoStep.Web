@@ -15,11 +15,20 @@ namespace AutoStep.Web.Chain
     /// </summary>
     public class ElementChain : IElementChain
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ElementChain"/> class.
+        /// </summary>
+        /// <param name="options">The set of chain options.</param>
         public ElementChain(ElementChainOptions options)
             : this(null, options)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ElementChain"/> class.
+        /// </summary>
+        /// <param name="executionContext">The current AutoStep execution context (optional).</param>
+        /// <param name="options">The set of chain options.</param>
         public ElementChain(TestExecutionContext? executionContext, ElementChainOptions options)
             : this(null, executionContext, options)
         {
@@ -30,6 +39,7 @@ namespace AutoStep.Web.Chain
         /// </summary>
         /// <param name="node">The node at the end of the chain.</param>
         /// <param name="executionContext">The current AutoStep execution context (optional).</param>
+        /// <param name="options">The set of chain options.</param>
         public ElementChain(DeclarationNode? node, TestExecutionContext? executionContext, ElementChainOptions options)
         {
             LeafNode = node;
@@ -60,6 +70,16 @@ namespace AutoStep.Web.Chain
         /// <inheritdoc/>
         public IElementChain AddNode(string descriptor, Func<IReadOnlyList<IWebElement>, IBrowser, CancellationToken, ValueTask<IReadOnlyList<IWebElement>>> callback)
         {
+            if (string.IsNullOrEmpty(descriptor))
+            {
+                throw new ArgumentException(ElementChainMessages.BlankDescriptor, nameof(descriptor));
+            }
+
+            if (callback is null)
+            {
+                throw new ArgumentNullException(nameof(callback));
+            }
+
             var newNode = new DeclarationNode(LeafNode, descriptor, callback, ActiveExecutionContext, true);
 
             return AddNode(newNode);
@@ -68,6 +88,16 @@ namespace AutoStep.Web.Chain
         /// <inheritdoc/>
         public IElementChain AddNode(string descriptor, Func<IReadOnlyList<IWebElement>, IBrowser, CancellationToken, ValueTask> callback)
         {
+            if (string.IsNullOrEmpty(descriptor))
+            {
+                throw new ArgumentException(ElementChainMessages.BlankDescriptor, nameof(descriptor));
+            }
+
+            if (callback is null)
+            {
+                throw new ArgumentNullException(nameof(callback));
+            }
+
             var newNode = new DeclarationNode(
                 LeafNode,
                 descriptor,

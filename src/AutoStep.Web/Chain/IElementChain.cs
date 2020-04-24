@@ -24,6 +24,9 @@ namespace AutoStep.Web.Chain
         /// </summary>
         public bool AnyPreviousNodes { get; }
 
+        /// <summary>
+        /// Gets the set of options for this chain.
+        /// </summary>
         ElementChainOptions Options { get; }
 
         /// <summary>

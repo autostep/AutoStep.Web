@@ -45,8 +45,26 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Compile Update="Chain\ChainExecutorMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ChainExecutorMessages.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Chain\ElementChainMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ElementChainMessages.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
     <EmbeddedResource Update="Chain\ChainExecutorMessages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ChainExecutorMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Chain\ElementChainMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ElementChainMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 
