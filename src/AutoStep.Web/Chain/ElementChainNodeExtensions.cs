@@ -134,8 +134,6 @@ namespace AutoStep.Web.Chain
 
         private static void AssertArguments(IElementChain chain, string descriptor, Delegate callback)
         {
-            AssertArguments(chain, descriptor, callback);
-
             if (chain is null)
             {
                 throw new ArgumentNullException(nameof(chain));
