@@ -36,7 +36,7 @@ jobs:
       run: dotnet tool restore
 
     - name: Install Chromium
-      run: apt-get install chromium-browser
+      run: sudo apt-get install chromium-browser
 
     - name: Launch Test App (background)
       run: dotnet test-apps/Basic/bin/Release/netcoreapp3.1/Basic.dll &
