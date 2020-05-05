@@ -4,5 +4,5 @@ Feature: TextBox
 
         Given I have navigated to /textbox in the basic application
         
-        Then the 'Label Fo' field should be displayed
+        Then the 'Label For' field should be displayed
         
