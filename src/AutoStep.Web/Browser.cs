@@ -47,7 +47,7 @@ namespace AutoStep.Web
             }
             else
             {
-                driverDir = extensionInfo.GetPackagePath("Selenium.WebDriver.ChromeDriver", "driver", "win32");
+                driverDir = extensionInfo.GetPackagePath("Selenium.WebDriver.ChromeDriver", "driver", "linux64");
             }
 
             chromeDriverService = ChromeDriverService.CreateDefaultService(driverDir);
