@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoStep.Extensions.Abstractions;
@@ -33,19 +34,20 @@ namespace AutoStep.Web
 
         public void Initialise()
         {
-            // Driver directory should be the same as this package.
             // Try and get from loaded extensions.
-
             string driverDir;
 
-            if (extensionInfo.IsPackageLoaded("Selenium.Chrome.WebDriver"))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                driverDir = extensionInfo.GetPackagePath("Selenium.Chrome.WebDriver", "driver");
+                driverDir = extensionInfo.GetPackagePath("Selenium.WebDriver.ChromeDriver", "driver", "win32");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                driverDir = extensionInfo.GetPackagePath("Selenium.WebDriver.ChromeDriver", "driver", "mac64");
             }
             else
             {
-                // Not loaded as an extension, just use the assembly folder.
-                driverDir = Path.GetDirectoryName(typeof(Browser).Assembly.Location);
+                driverDir = extensionInfo.GetPackagePath("Selenium.WebDriver.ChromeDriver", "driver", "win32");
             }
 
             chromeDriverService = ChromeDriverService.CreateDefaultService(driverDir);
