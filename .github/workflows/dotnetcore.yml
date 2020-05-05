@@ -45,7 +45,7 @@ jobs:
       run: dotnet test-apps/Basic/bin/Release/netcoreapp3.1/Basic.dll &
 
     - name: Run AutoStep Tests
-      run: dotnet autostep -d interactions
+      run: dotnet autostep run -d interactions
 
     - name: Pack
       run:  dotnet pack ./src/AutoStep.Web/AutoStep.Web.csproj --no-build -o artifacts -c Release --version-suffix  ${{ steps.gitversion.outputs.PreReleaseTag }}
