@@ -9,7 +9,7 @@ namespace AutoStep.Web
 {
     public class InteractionMethods : BaseWebMethods
     {
-        public InteractionMethods(IBrowser browser, ILogger<BaseWebMethods> logger, IElementChainExecutor elementEvaluator, MethodContext methodContext)
+        public InteractionMethods(IBrowser browser, ILogger<InteractionMethods> logger, IElementChainExecutor elementEvaluator, MethodContext methodContext)
             : base(browser, logger, elementEvaluator, methodContext)
         {
         }
@@ -71,6 +71,21 @@ namespace AutoStep.Web
         public async ValueTask Type(string text, CancellationToken cancelToken)
         {
             var chain = AddToChain(q => q.Type(text));
+
+            // Concrete method; execute chain.
+            await ExecuteChainAsync(chain, cancelToken);
+        }
+
+        [InteractionMethod("assertOne", Documentation = @"
+
+            Assert that exactly one element exists in the chain. 
+
+            If there are no elements, or more than one element is present, an error will be raised.
+
+        ")]
+        public async ValueTask AssertOne(CancellationToken cancelToken)
+        {
+            var chain = AddToChain(q => q.AssertSingle());
 
             // Concrete method; execute chain.
             await ExecuteChainAsync(chain, cancelToken);

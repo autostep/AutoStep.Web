@@ -1,29 +1,32 @@
 ﻿
 Trait: named
 
+  Step: Then the {name} $component$ should be displayed
+    locateNamed(name) -> assertOne()
+
   locateNamed(name): needs-defining
 
 Trait: clickable + named
 
   Step: Given I have clicked the {name} $component$
-    locateNamed(name) -> displayed() -> click()
+    locateNamed(name) -> click()
 
 Trait: editable + named
 
   Step: Given I have entered {text} into the {name} $component$
-    locateNamed(name) -> displayed() -> assertAtLeastOne() -> type(text)
+    locateNamed(name) -> type(text)
 
 Component: button
 
   traits: clickable, named
 
-  locateNamed(name): select('input[type=submit]') -> withAttribute('aria-label', name)
+  locateNamed(name): select('input[type=submit]') -> withText(name)
 
 Component: field
 
   traits: editable, named
 
-  locateNamed(name): select('input[type=text]') -> withAttribute('aria-label', name)
+  locateNamed(name): locateElementByStandardLabels(name)
 
 Component: page
 

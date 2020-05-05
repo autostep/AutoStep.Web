@@ -69,9 +69,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="content\DefaultInteractions.asi" Pack="true" PackagePath="">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Update="../../interactions/src/*" Pack="true" PackagePath="content/" />
   </ItemGroup>
 
 </Project>

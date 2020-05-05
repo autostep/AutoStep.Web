@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoStep.Extensions.Abstractions;
+using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
@@ -20,12 +21,14 @@ namespace AutoStep.Web
     public class Browser : IBrowser
     {
         private readonly ILoadedExtensions extensionInfo;
+        private readonly IConfigurationRoot config;
         private IWebDriver? driver;
         private ChromeDriverService chromeDriverService;
 
-        public Browser(ILoadedExtensions extensionInfo)
+        public Browser(ILoadedExtensions extensionInfo, IConfigurationRoot config)
         {
             this.extensionInfo = extensionInfo;
+            this.config = config;
         }
 
         public void Initialise()
@@ -49,6 +52,11 @@ namespace AutoStep.Web
             chromeDriverService.HideCommandPromptWindow = true;
 
             var chromeOptions = new ChromeOptions();
+
+            if (config.GetValue("headless", false))
+            {
+                chromeOptions.AddArgument("--headless");
+            }
 
             driver = new ChromeDriver(chromeDriverService, chromeOptions);
         }

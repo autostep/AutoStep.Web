@@ -23,6 +23,7 @@ namespace AutoStep.Web
             project.Compiler.AddStepDefinitionSource(new AssemblyStepDefinitionSource(typeof(Extension).Assembly, logFactory));
 
             project.Compiler.Interactions.AddMethods<InteractionMethods>();
+            project.Compiler.Interactions.AddMethods<LabelMethods>();
         }
 
         public void ExtendExecution(IConfiguration projectConfig, TestRun testRun)

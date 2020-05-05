@@ -46,12 +46,33 @@ namespace AutoStep.Web.Chain
             }
             else
             {
-                // No other stages, just search from the root.
-                return chain.AddNode($"{nameof(Select)}('{query}')", (elements, browser) =>
-                {
-                    return browser.Driver.FindElements(By.CssSelector(query));
-                });
+                return SelectFromRoot(chain, query);
             }
+        }
+
+        /// <summary>
+        /// Add a CSS select operation to the element chain. This operation searches from the document root.
+        /// </summary>
+        /// <param name="chain">The element chain.</param>
+        /// <param name="query">The CSS query.</param>
+        /// <returns>The new element chain.</returns>
+        public static IElementChain SelectFromRoot(this IElementChain chain, string query)
+        {
+            if (chain is null)
+            {
+                throw new System.ArgumentNullException(nameof(chain));
+            }
+
+            if (string.IsNullOrEmpty(query))
+            {
+                throw new System.ArgumentException(ElementChainMessages.BlankStringParameter, nameof(query));
+            }
+
+            // No other stages, just search from the root.
+            return chain.AddNode($"{nameof(Select)}('{query}')", (elements, browser) =>
+            {
+                return browser.Driver.FindElements(By.CssSelector(query));
+            });
         }
 
         /// <summary>
@@ -97,7 +118,7 @@ namespace AutoStep.Web.Chain
 
             text ??= string.Empty;
 
-            return chain.AddNode($"{nameof(WithText)}({text})", elements => elements.Where(x => x.Text == text));
+            return chain.AddNode($"{nameof(WithText)}('{text}')", elements => elements.Where(x => x.Text == text));
         }
 
         /// <summary>

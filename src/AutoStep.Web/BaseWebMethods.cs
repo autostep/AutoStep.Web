@@ -14,7 +14,7 @@ namespace AutoStep.Web
         private readonly ElementChainOptions chainOptions;
         private readonly IElementChainExecutor evaluator;
 
-        public BaseWebMethods(IBrowser browser, ILogger logger, IElementChainExecutor evaluator, MethodContext methodContext)
+        public BaseWebMethods(IBrowser browser, ILogger<BaseWebMethods> logger, IElementChainExecutor evaluator, MethodContext methodContext)
         {
             Browser = browser;
             Logger = logger;

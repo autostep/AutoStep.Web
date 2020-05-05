@@ -25,13 +25,25 @@ jobs:
     - name: GitVersion
       id: gitversion  # step id used as reference for output values
       uses: roryprimrose/rungitversion@v1.0.0
-           
+     
     - name: Build with dotnet
       run: dotnet build --configuration Release
     
-   # - name: Run tests
-   #   run: dotnet test --configuration Release --no-build
-      
+    - name: Run unit tests
+      run: dotnet test --configuration Release --no-build
+
+    - name: Restore Tools
+      run: dotnet tool restore
+
+    - name: Install Chromium
+      run: apt-get install chromium-browser
+
+    - name: Launch Test App (background)
+      run: dotnet test-apps/Basic/bin/Release/netcoreapp3.1/Basic.dll &
+
+    - name: Run AutoStep Tests
+      run: dotnet autostep -d interactions
+
     - name: Pack
       run:  dotnet pack ./src/AutoStep.Web/AutoStep.Web.csproj --no-build -o artifacts -c Release --version-suffix  ${{ steps.gitversion.outputs.PreReleaseTag }}
             

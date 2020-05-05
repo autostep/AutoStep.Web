@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "autostep-cli": {
+      "version": "1.0.0-develop.26",
+      "commands": [
+        "autostep"
+      ]
+    }
+  }
+}

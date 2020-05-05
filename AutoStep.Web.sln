@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoStep.Web", "src\AutoStep.Web\AutoStep.Web.csproj", "{1C2CEDD2-0432-4BF2-BDA3-65756170BDBD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BC2FBB18-3D8C-44CB-8C50-4F69F50690B3}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3DE7C993-B1B1-4754-8726-64576106DBCD}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,7 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		Analysis.ruleset = Analysis.ruleset
-		Directory.Build.props = Directory.Build.props
 		.github\workflows\dotnetcore-pull.yml = .github\workflows\dotnetcore-pull.yml
 		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
 		InteractionLanguage.md = InteractionLanguage.md
@@ -22,13 +24,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C0B75D34-9AB3-4308-AA98-120F0967E297}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C0B75D34-9AB3-4308-AA98-120F0967E297}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoStep.Web.Tests", "test\AutoStep.Web.Tests\AutoStep.Web.Tests.csproj", "{7EA5A45A-D5BB-4F57-AA49-E6BFD63847C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoStep.Extensions.Testing", "tests\AutoStep.Extensions.Testing\AutoStep.Extensions.Testing.csproj", "{9F4DCDE5-EDED-4622-9B79-0C4DE2C8424D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoStep.Web.IntegrationTests", "tests\AutoStep.Web.IntegrationTests\AutoStep.Web.IntegrationTests.csproj", "{C34DC27B-E157-49F0-B6A4-F1496D9960FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoStep.Web.Tests", "tests\AutoStep.Web.Tests\AutoStep.Web.Tests.csproj", "{0AC39D9A-4D02-4BD8-9F71-B86E3DE53426}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoStep.Extensions.Testing", "tests\AutoStep.Extensions.Testing\AutoStep.Extensions.Testing.csproj", "{9F4DCDE5-EDED-4622-9B79-0C4DE2C8424D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Basic", "test-apps\Basic\Basic.csproj", "{D0D48E5F-D030-4118-B7B5-C1EAC6EAA9B1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-apps", "test-apps", "{8756AF8B-C6D2-4DF0-918D-A2C139877B27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,27 +44,27 @@ Global
 		{1C2CEDD2-0432-4BF2-BDA3-65756170BDBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C2CEDD2-0432-4BF2-BDA3-65756170BDBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C2CEDD2-0432-4BF2-BDA3-65756170BDBD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7EA5A45A-D5BB-4F57-AA49-E6BFD63847C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EA5A45A-D5BB-4F57-AA49-E6BFD63847C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7EA5A45A-D5BB-4F57-AA49-E6BFD63847C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7EA5A45A-D5BB-4F57-AA49-E6BFD63847C3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C34DC27B-E157-49F0-B6A4-F1496D9960FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C34DC27B-E157-49F0-B6A4-F1496D9960FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C34DC27B-E157-49F0-B6A4-F1496D9960FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C34DC27B-E157-49F0-B6A4-F1496D9960FC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9F4DCDE5-EDED-4622-9B79-0C4DE2C8424D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9F4DCDE5-EDED-4622-9B79-0C4DE2C8424D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F4DCDE5-EDED-4622-9B79-0C4DE2C8424D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F4DCDE5-EDED-4622-9B79-0C4DE2C8424D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AC39D9A-4D02-4BD8-9F71-B86E3DE53426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AC39D9A-4D02-4BD8-9F71-B86E3DE53426}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AC39D9A-4D02-4BD8-9F71-B86E3DE53426}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AC39D9A-4D02-4BD8-9F71-B86E3DE53426}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0D48E5F-D030-4118-B7B5-C1EAC6EAA9B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0D48E5F-D030-4118-B7B5-C1EAC6EAA9B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0D48E5F-D030-4118-B7B5-C1EAC6EAA9B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0D48E5F-D030-4118-B7B5-C1EAC6EAA9B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1C2CEDD2-0432-4BF2-BDA3-65756170BDBD} = {BC2FBB18-3D8C-44CB-8C50-4F69F50690B3}
-		{7EA5A45A-D5BB-4F57-AA49-E6BFD63847C3} = {C0B75D34-9AB3-4308-AA98-120F0967E297}
-		{C34DC27B-E157-49F0-B6A4-F1496D9960FC} = {C0B75D34-9AB3-4308-AA98-120F0967E297}
 		{9F4DCDE5-EDED-4622-9B79-0C4DE2C8424D} = {C0B75D34-9AB3-4308-AA98-120F0967E297}
+		{0AC39D9A-4D02-4BD8-9F71-B86E3DE53426} = {C0B75D34-9AB3-4308-AA98-120F0967E297}
+		{D0D48E5F-D030-4118-B7B5-C1EAC6EAA9B1} = {8756AF8B-C6D2-4DF0-918D-A2C139877B27}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FB9FC4AB-708A-4B3D-880B-EA416E1F2DE9}

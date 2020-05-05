@@ -1,0 +1,15 @@
+{
+    "localExtensions": [
+        { "folder": "../src/AutoStep.Web", "watch": true  }  
+    ],
+
+    "debugExtensionBuilds": true,
+
+    "headless": true,
+
+    "apps": {
+        "basic": {
+            "url": "http://localhost:6001"
+        }
+    }
+}
