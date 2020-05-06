@@ -1,8 +1,7 @@
 ﻿using System;
-using AutoStep.Tests.Utils;
 using Microsoft.Extensions.Logging;
 
-namespace AutoStep.Extensions.Testing
+namespace AutoStep.Web.Tests.Util
 {
     internal class TestLogger : ILogger
     {

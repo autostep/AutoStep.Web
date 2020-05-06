@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AutoStep.Web.Chain.Execution;
 
 namespace AutoStep.Web.Chain
 {
@@ -18,9 +19,9 @@ namespace AutoStep.Web.Chain
         /// Describe an executed element chain. Generates a list of methods/steps, their associated nodes and, if indicated with <paramref name="captureElementDetail"/>, details
         /// of the input and output web elements at each stage.
         /// </summary>
-        /// <param name="executionChain">The execution chain.</param>
+        /// <param name="entryExecutionNode">The start of the execution chain.</param>
         /// <param name="captureElementDetail">Indicates whether or not to capture element detail. Setting this to true makes this method long-running.</param>
         /// <returns>A description string.</returns>
-        string DescribeExecution(LinkedList<ExecutionNode> executionChain, bool captureElementDetail);
+        string DescribeExecution(ExecutionNode entryExecutionNode, bool captureElementDetail);
     }
 }

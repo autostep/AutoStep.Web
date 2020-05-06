@@ -26,7 +26,7 @@ Component: field
 
   traits: editable, named
 
-  locateNamed(name): locateElementByStandardLabels(name)
+  locateNamed(name): locateInputByStandardLabels(name)
 
 Component: page
 

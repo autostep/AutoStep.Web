@@ -1,8 +1,7 @@
-﻿using AutoStep.Tests.Utils;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
-namespace AutoStep.Extensions.Testing
+namespace AutoStep.Web.Tests.Util
 {
     internal static class TestLogFactory
     {

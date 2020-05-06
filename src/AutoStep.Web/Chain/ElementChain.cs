@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoStep.Execution.Contexts;
-using Microsoft.Extensions.Logging;
+using AutoStep.Web.Chain.Declaration;
+using AutoStep.Web.Chain.Execution;
 using OpenQA.Selenium;
 
 namespace AutoStep.Web.Chain
@@ -80,7 +81,7 @@ namespace AutoStep.Web.Chain
                 throw new ArgumentNullException(nameof(callback));
             }
 
-            var newNode = new DeclarationNode(LeafNode, descriptor, callback, ActiveExecutionContext, true);
+            var newNode = new SingleNode(LeafNode, descriptor, callback, ActiveExecutionContext, true);
 
             return AddNode(newNode);
         }
@@ -98,7 +99,7 @@ namespace AutoStep.Web.Chain
                 throw new ArgumentNullException(nameof(callback));
             }
 
-            var newNode = new DeclarationNode(
+            var newNode = new SingleNode(
                 LeafNode,
                 descriptor,
                 async (webElements, browser, cancelToken) =>
@@ -113,9 +114,63 @@ namespace AutoStep.Web.Chain
             return AddNode(newNode);
         }
 
+        public IElementChain AddGroupingNode(string descriptor, Func<IEnumerable<IReadOnlyList<IWebElement>>, IReadOnlyList<IWebElement>> reducer, params Func<IElementChain, IElementChain>[] chainBuilders)
+        {
+            if (string.IsNullOrEmpty(descriptor))
+            {
+                throw new ArgumentException(ElementChainMessages.BlankStringParameter, nameof(descriptor));
+            }
+
+            if (reducer is null)
+            {
+                throw new ArgumentNullException(nameof(reducer));
+            }
+
+            var chains = new List<IElementChain>();
+
+            foreach (var builder in chainBuilders)
+            {
+                chains.Add(builder(new ElementChain(ActiveExecutionContext, Options)));
+            }
+
+            var newNode = new GroupingNode(
+                LeafNode,
+                descriptor,
+                ActiveExecutionContext,
+                reducer,
+                chains);
+
+            return AddNode(newNode);
+        }
+
         private IElementChain AddNode(DeclarationNode newNode)
         {
             return new ElementChain(newNode, ActiveExecutionContext, Options);
+        }
+
+        public ExecutionNode? CreateExecutionEntryNode()
+        {
+            ExecutionNode? firstExecutionNode = null;
+            DeclarationNode? current = LeafNode;
+
+            // First node executes first.
+            while (current is object)
+            {
+                var newNode = current.CreateExecutionNode();
+
+                newNode.Next = firstExecutionNode;
+
+                if (firstExecutionNode is object)
+                {
+                    firstExecutionNode.Previous = newNode;
+                }
+
+                firstExecutionNode = newNode;
+
+                current = current!.PreviousNode;
+            }
+
+            return firstExecutionNode;
         }
     }
 }

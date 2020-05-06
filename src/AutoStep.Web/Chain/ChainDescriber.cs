@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using AutoStep.Elements.Metadata;
 using AutoStep.Execution.Contexts;
+using AutoStep.Web.Chain.Declaration;
+using AutoStep.Web.Chain.Execution;
 using OpenQA.Selenium;
 
 namespace AutoStep.Web.Chain
@@ -46,80 +48,12 @@ namespace AutoStep.Web.Chain
 
             do
             {
-                var addedNode = executionSet.AddFirst(first);
+                executionSet.AddFirst(first);
 
                 first = first!.PreviousNode;
             }
             while (first is object);
 
-            return Render(executionSet, (strBuilder, node) =>
-            {
-                strBuilder.Append("  ");
-                strBuilder.AppendLine(node.Descriptor);
-            });
-        }
-
-        /// <inheritdoc/>
-        public string DescribeExecution(LinkedList<ExecutionNode> executionChain, bool captureElementDetail)
-        {
-            var encounteredError = false;
-
-            return Render(executionChain, (strBuilder, node) =>
-            {
-                // Write the descriptor first.
-                AppendIndent(strBuilder, 1);
-                strBuilder.AppendLine(node.Descriptor);
-
-                // If the node was executed, indicate the input and output elements.
-                if (node.WasExecuted)
-                {
-                    // Render the input elements detail.
-                    AppendIndent(strBuilder, 2);
-                    strBuilder.AppendLine("Input:");
-                    RenderElementCollection(strBuilder, node.InputElements ?? Array.Empty<IWebElement>(), captureElementDetail, 3);
-
-                    if (node.Error is object)
-                    {
-                        // Exception occurred, include full details.
-                        encounteredError = true;
-
-                        // TODO: Richer information for AutoStep assertion exceptions?
-                        AppendIndent(strBuilder, 2);
-                        strBuilder.AppendLine("NODE FAILED - EXCEPTION " + node.Error.GetType().Name);
-
-                        AppendIndent(strBuilder, 3);
-                        strBuilder.AppendLine(node.Error.Message);
-                    }
-                    else if (node.ModifiesSet)
-                    {
-                        // Only render the output elements detail if the node was a modification one.
-                        AppendIndent(strBuilder, 2);
-                        strBuilder.AppendLine("Node Passed - Output:");
-                        RenderElementCollection(strBuilder, node.OutputElements ?? Array.Empty<IWebElement>(), captureElementDetail, 3);
-                    }
-                    else
-                    {
-                        // No output, don't show it.
-                        AppendIndent(strBuilder, 2);
-                        strBuilder.AppendLine("Node Passed");
-                    }
-                }
-                else if (encounteredError)
-                {
-                    AppendIndent(strBuilder, 1);
-                    strBuilder.AppendLine("not run - previous node failed");
-                }
-                else
-                {
-                    AppendIndent(strBuilder, 1);
-                    strBuilder.AppendLine("skipped - using cached results from previous evaluation");
-                }
-            });
-        }
-
-        private static string Render<TElement>(LinkedList<TElement> executionSet, Action<StringBuilder, TElement> elementCallback)
-            where TElement : IDescribable
-        {
             TestExecutionContext? lastExecutionContext = null;
             var strBuilder = new StringBuilder();
 
@@ -128,25 +62,7 @@ namespace AutoStep.Web.Chain
             {
                 if (lastExecutionContext != node.ExecutionContext)
                 {
-                    if (lastExecutionContext is object)
-                    {
-                        // Close the last descriptor, add call separator.
-                        strBuilder.AppendLine("]");
-                        strBuilder.Append(" -> ");
-                    }
-
-                    if (lastExecutionContext is MethodContext methodContext)
-                    {
-                        WriteMethodCall(strBuilder, methodContext.MethodCall!, methodContext.Arguments);
-                    }
-                    else if (lastExecutionContext is StepContext stepContext)
-                    {
-                        WriteStep(strBuilder, stepContext);
-                    }
-                    else
-                    {
-                        strBuilder.Append("nodes");
-                    }
+                    RenderStartExecutionContext(strBuilder, lastExecutionContext, node.ExecutionContext);
 
                     strBuilder.AppendLine(" : [");
 
@@ -154,7 +70,8 @@ namespace AutoStep.Web.Chain
                 }
 
                 // Write the node.
-                elementCallback(strBuilder, node);
+                strBuilder.Append("  ");
+                strBuilder.AppendLine(node.Descriptor);
             }
 
             if (lastExecutionContext is object)
@@ -163,6 +80,137 @@ namespace AutoStep.Web.Chain
             }
 
             return strBuilder.ToString();
+        }
+
+        /// <inheritdoc/>
+        public string DescribeExecution(ExecutionNode entryPoint, bool captureElementDetail)
+        {
+            TestExecutionContext? lastExecutionContext = null;
+            var strBuilder = new StringBuilder();
+            ExecutionNode? current = entryPoint;
+            bool encounteredError = false;
+
+            // Now walk the linked list.
+            while (current is object)
+            {
+                if (lastExecutionContext != current.ExecutionContext)
+                {
+                    RenderStartExecutionContext(strBuilder, lastExecutionContext, current.ExecutionContext);
+
+                    strBuilder.AppendLine(" : [");
+
+                    lastExecutionContext = current.ExecutionContext;
+                }
+
+                RenderNode(strBuilder, current, 0, captureElementDetail, ref encounteredError);
+
+                current = current.Next;
+            }
+
+            if (lastExecutionContext is object)
+            {
+                strBuilder.AppendLine("]");
+            }
+
+            return strBuilder.ToString();
+        }
+
+        private static void RenderStartExecutionContext(StringBuilder builder, TestExecutionContext? lastContext, TestExecutionContext? newContext)
+        {
+            if (lastContext is object)
+            {
+                // Close the last descriptor, add call separator.
+                builder.AppendLine("]");
+                builder.Append(" -> ");
+            }
+
+            if (newContext is MethodContext methodContext)
+            {
+                WriteMethodCall(builder, methodContext.MethodCall!, methodContext.Arguments);
+            }
+            else if (newContext is StepContext stepContext)
+            {
+                WriteStep(builder, stepContext);
+            }
+            else
+            {
+                builder.Append("nodes");
+            }
+        }
+
+        private static void RenderNode(StringBuilder builder, ExecutionNode node, int indentDepth, bool captureElementDetail, ref bool encounteredError)
+        {
+            // Write the descriptor first.
+            AppendIndent(builder, indentDepth);
+            builder.AppendLine(node.Descriptor);
+
+            // If the node was executed, indicate the input and output elements.
+            if (node.WasExecuted)
+            {
+                // Render the input elements detail.
+                AppendIndent(builder, indentDepth + 2);
+                builder.AppendLine("Input:");
+                RenderElementCollection(builder, node.InputElements ?? Array.Empty<IWebElement>(), captureElementDetail, indentDepth + 3);
+
+                if (node.Children.Any())
+                {
+                    AppendIndent(builder, indentDepth + 2);
+                    builder.AppendLine("Children: [ ");
+
+                    foreach (var child in node.Children)
+                    {
+                        AppendIndent(builder, indentDepth + 3);
+                        builder.AppendLine("Nested Chain:");
+                        ExecutionNode? current = child;
+
+                        // Now walk the linked list.
+                        while (current is object)
+                        {
+                            RenderNode(builder, current, indentDepth + 4, captureElementDetail, ref encounteredError);
+                            current = current.Next;
+                        }
+                    }
+
+                    AppendIndent(builder, indentDepth + 2);
+                    builder.AppendLine("]");
+                }
+
+                if (node.Error is object)
+                {
+                    // Exception occurred, include full details.
+                    encounteredError = true;
+
+                    // TODO: Richer information for AutoStep assertion exceptions?
+                    AppendIndent(builder, indentDepth + 2);
+                    builder.AppendLine("NODE FAILED - EXCEPTION " + node.Error.GetType().Name);
+
+                    AppendIndent(builder, indentDepth + 3);
+                    builder.AppendLine(node.Error.Message);
+                }
+                else if (node.ModifiesSet)
+                {
+                    // Only render the output elements detail if the node was a modification one.
+                    AppendIndent(builder, indentDepth + 2);
+                    builder.AppendLine("Node Passed - Output:");
+                    RenderElementCollection(builder, node.OutputElements ?? Array.Empty<IWebElement>(), captureElementDetail, indentDepth + 3);
+                }
+                else
+                {
+                    // No output, don't show it.
+                    AppendIndent(builder, indentDepth + 2);
+                    builder.AppendLine("Node Passed");
+                }
+            }
+            else if (encounteredError)
+            {
+                AppendIndent(builder, indentDepth + 1);
+                builder.AppendLine("not run - previous node failed");
+            }
+            else
+            {
+                AppendIndent(builder, indentDepth + 1);
+                builder.AppendLine("skipped - using cached results from previous evaluation");
+            }
         }
 
         private static void AppendIndent(StringBuilder builder, int depth)

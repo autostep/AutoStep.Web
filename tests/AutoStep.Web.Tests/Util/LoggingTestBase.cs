@@ -1,7 +1,7 @@
 ﻿using Xunit.Abstractions;
 using Microsoft.Extensions.Logging;
 
-namespace AutoStep.Extensions.Testing
+namespace AutoStep.Web.Tests.Util
 {
     public class LoggingTestBase
     {

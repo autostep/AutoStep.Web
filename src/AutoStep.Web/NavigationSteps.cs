@@ -11,7 +11,7 @@ namespace AutoStep.Web
         private readonly IBrowser browser;
         private readonly IConfiguration config;
 
-        public NavigationSteps(IBrowser browser, IConfigurationRoot config)
+        public NavigationSteps(IBrowser browser, IConfiguration config)
         {
             this.browser = browser;
             this.config = config;

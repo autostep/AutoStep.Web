@@ -22,11 +22,11 @@ namespace AutoStep.Web
     public class Browser : IBrowser
     {
         private readonly ILoadedExtensions extensionInfo;
-        private readonly IConfigurationRoot config;
+        private readonly IConfiguration config;
         private IWebDriver? driver;
         private ChromeDriverService chromeDriverService;
 
-        public Browser(ILoadedExtensions extensionInfo, IConfigurationRoot config)
+        public Browser(ILoadedExtensions extensionInfo, IConfiguration config)
         {
             this.extensionInfo = extensionInfo;
             this.config = config;

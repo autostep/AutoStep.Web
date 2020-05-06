@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoStep.Extensions.Testing;
 using AutoStep.Web.Chain;
+using AutoStep.Web.Tests.Util;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -13,7 +13,7 @@ using Xunit;
 using Xunit.Abstractions;
 
 namespace AutoStep.Web.Tests.Chain
-{   
+{
     public class ChainExecutorTests : LoggingTestBase
     {
         public ChainExecutorTests(ITestOutputHelper outputHelper) 

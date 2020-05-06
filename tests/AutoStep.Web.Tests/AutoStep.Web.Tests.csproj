@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AutoStep.Web\AutoStep.Web.csproj" />
-    <ProjectReference Include="..\..\tests\AutoStep.Extensions.Testing\AutoStep.Extensions.Testing.csproj" />
   </ItemGroup>
 
 </Project>

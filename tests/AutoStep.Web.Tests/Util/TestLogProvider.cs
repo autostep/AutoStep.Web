@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using AutoStep.Extensions.Testing;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
-namespace AutoStep.Tests.Utils
+namespace AutoStep.Web.Tests.Util
 {
     internal class TestLogProvider : ILoggerProvider
     {

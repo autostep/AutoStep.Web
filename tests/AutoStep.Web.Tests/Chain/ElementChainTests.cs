@@ -4,6 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using AutoStep.Web.Chain;
+using AutoStep.Web.Chain.Declaration;
 using FluentAssertions;
 using OpenQA.Selenium;
 using Xunit;
@@ -68,7 +69,7 @@ namespace AutoStep.Web.Tests.Chain
             var set = new IWebElement[1];
 
             chain.LeafNode.Should().NotBeNull();
-            var result = await chain.LeafNode!.Callback(set, null!, default);
+            var result = await (chain.LeafNode! as SingleNode).Callback(set, null!, default);
 
             invoked.Should().BeTrue();
             result.Should().BeSameAs(set);

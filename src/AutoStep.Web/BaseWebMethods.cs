@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoStep.Configuration;
 using AutoStep.Execution.Contexts;
 using AutoStep.Web.Chain;
+using AutoStep.Web.Chain.Declaration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 
@@ -14,7 +17,7 @@ namespace AutoStep.Web
         private readonly ElementChainOptions chainOptions;
         private readonly IElementChainExecutor evaluator;
 
-        public BaseWebMethods(IBrowser browser, ILogger<BaseWebMethods> logger, IElementChainExecutor evaluator, MethodContext methodContext)
+        public BaseWebMethods(IBrowser browser, IConfiguration config, ILogger<BaseWebMethods> logger, IElementChainExecutor evaluator, MethodContext methodContext)
         {
             Browser = browser;
             Logger = logger;
@@ -22,9 +25,9 @@ namespace AutoStep.Web
             MethodContext = methodContext;
             chainOptions = new ElementChainOptions
             {
-                RetryDelayMs = 200,
+                RetryDelayMs = config.GetRunConfigurationOption("web:retryDelayMs", 200),
                 PageWaitTimeoutMs = 100,
-                TotalWaitTimeoutMs = 2000
+                TotalWaitTimeoutMs = config.GetRunConfigurationOption("web:totalRetryTimeoutMs", 2000),
             };
         }
 

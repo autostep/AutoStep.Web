@@ -3,14 +3,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoStep.Execution.Contexts;
 using AutoStep.Web.Chain;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace AutoStep.Web
 {
     public class InteractionMethods : BaseWebMethods
     {
-        public InteractionMethods(IBrowser browser, ILogger<InteractionMethods> logger, IElementChainExecutor elementEvaluator, MethodContext methodContext)
-            : base(browser, logger, elementEvaluator, methodContext)
+        public InteractionMethods(IBrowser browser, IConfiguration config, ILogger<InteractionMethods> logger, IElementChainExecutor elementEvaluator, MethodContext methodContext)
+            : base(browser, config, logger, elementEvaluator, methodContext)
         {
         }
 

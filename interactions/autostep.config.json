@@ -1,11 +1,16 @@
 {
     "localExtensions": [
-        { "folder": "../src/AutoStep.Web", "watch": true  }  
+        { "folder": "../src/AutoStep.Web", "watch": true  },
+        { "folder": "../tests/AutoStep.ExtensionTesting", "watch": true }  
     ],
 
     "debugExtensionBuilds": true,
 
     "headless": true,
+
+    "web": {
+        "totalRetryTimeoutMs": 1000
+    },
 
     "apps": {
         "basic": {

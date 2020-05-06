@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoStep.Web.Chain.Declaration;
+using AutoStep.Web.Chain.Execution;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -41,7 +43,6 @@ namespace AutoStep.Web.Chain
             var options = chain.Options;
             IReadOnlyList<IWebElement> results = Array.Empty<IWebElement>();
             Exception? lastException = null;
-            LinkedListNode<ExecutionNode>? firstWithCache;
             var succeeded = false;
             var attemptCount = 0;
 
@@ -52,7 +53,13 @@ namespace AutoStep.Web.Chain
             }
 
             // First, build our list of execution nodes (in the reverse order of the chain's PreviousNode relationship).
-            var executionSet = BuildExecutionSet(chain.LeafNode, out firstWithCache);
+            var entryPoint = chain.CreateExecutionEntryNode();
+
+            // Get the last node with a cache.
+            var lastWithCache = GetLastNodeWithCache(entryPoint);
+
+            var startTime = DateTime.UtcNow;
+            var timeoutSpan = TimeSpan.FromMilliseconds(options.TotalWaitTimeoutMs);
 
             do
             {
@@ -60,10 +67,13 @@ namespace AutoStep.Web.Chain
                 {
                     if (lastException is object)
                     {
-                        // The last attempt failed.
-                        logger.LogWarning(ChainExecutorMessages.ElementChainAttemptFailure, attemptCount);
-                        logger.LogWarning(describer.DescribeExecution(executionSet, false));
-                        logger.LogWarning(ChainExecutorMessages.WillRetry, options.RetryDelayMs);
+                        if (logger.IsEnabled(LogLevel.Debug))
+                        {
+                            // The last attempt failed.
+                            logger.LogDebug(ChainExecutorMessages.ElementChainAttemptFailure, attemptCount);
+                            logger.LogDebug(describer.DescribeExecution(entryPoint, false));
+                            logger.LogDebug(ChainExecutorMessages.WillRetry, options.RetryDelayMs);
+                        }
 
                         // Give it a moment (the configured amount).
                         await Task.Delay(options.RetryDelayMs, cancellationToken).ConfigureAwait(false);
@@ -74,17 +84,17 @@ namespace AutoStep.Web.Chain
                     if (await browser.WaitForPageReady(cancellationToken))
                     {
                         // First, start from the one that has enumerated elements already.
-                        if (firstWithCache is object)
+                        if (lastWithCache is object)
                         {
-                            results = await Attempt(firstWithCache, browser, useElementsAtStart: true, cancellationToken);
+                            results = await Attempt(lastWithCache, browser, useElementsAtStart: true, cancellationToken);
                         }
                         else
                         {
-                            results = await Attempt(executionSet.First!, browser, useElementsAtStart: false, cancellationToken);
+                            results = await Attempt(entryPoint, browser, useElementsAtStart: false, cancellationToken);
                         }
 
                         // Store the final set of evaluated elements against the last node.
-                        executionSet.Last!.Value.CachedElements = results;
+                        entryPoint.Last.CachedElements = results;
 
                         succeeded = true;
                         lastException = null;
@@ -100,15 +110,14 @@ namespace AutoStep.Web.Chain
                 {
                     // When an error occurs, we want to know whether or not to bail.
                     // Definitely going to ignore the node that already has elements, that's not going to work for me.
-                    firstWithCache = null;
+                    lastWithCache = null;
                     lastException = ex;
                 }
             }
-            while (!succeeded && attemptCount <= 10);
+            while (!succeeded && (DateTime.UtcNow - startTime) < timeoutSpan);
 
             if (!succeeded)
             {
-                // TODO:
                 // Dump the failing node to a log, or some sort of context, and as much associated data as we can find.
                 // Track the elements found at each node, including the start point, grouped by associated method info.
                 if (lastException is OperationCanceledException)
@@ -119,7 +128,7 @@ namespace AutoStep.Web.Chain
                 {
                     logger.LogError(ChainExecutorMessages.ElementChainError);
 
-                    logger.LogError(describer.DescribeExecution(executionSet, true));
+                    logger.LogError(describer.DescribeExecution(entryPoint, true));
                 }
 
                 if (lastException is object)
@@ -135,47 +144,40 @@ namespace AutoStep.Web.Chain
 
                 if (logger.IsEnabled(LogLevel.Debug))
                 {
-                    logger.LogDebug(describer.DescribeExecution(executionSet, true));
+                    logger.LogDebug(describer.DescribeExecution(entryPoint, true));
                 }
             }
 
             return results;
         }
 
-        private static LinkedList<ExecutionNode> BuildExecutionSet(DeclarationNode start, out LinkedListNode<ExecutionNode>? firstWithCache)
+        private ExecutionNode? GetLastNodeWithCache(ExecutionNode entryPoint)
         {
-            var executionSet = new LinkedList<ExecutionNode>();
-            DeclarationNode? current = start;
+            ExecutionNode? withCache = null;
+            ExecutionNode? current = entryPoint;
 
-            firstWithCache = null;
-
-            // First node executes first.
-            do
+            while (current is object)
             {
-                var addedNode = executionSet.AddFirst(new ExecutionNode(current));
-
-                // If we have a node that has cached elements, we will try to use it (but only on the first attempt).
-                if (firstWithCache is null && current?.CachedElements is object)
+                if (current.CachedElements is object)
                 {
-                    firstWithCache = addedNode;
+                    withCache = current;
                 }
 
-                current = current!.PreviousNode;
+                current = current.Next;
             }
-            while (current is object);
 
-            return executionSet;
+            return withCache;
         }
 
-        private async ValueTask<IReadOnlyList<IWebElement>> Attempt(LinkedListNode<ExecutionNode> startPoint, IBrowser browser, bool useElementsAtStart, CancellationToken cancellationToken)
+        private async ValueTask<IReadOnlyList<IWebElement>> Attempt(ExecutionNode startPoint, IBrowser browser, bool useElementsAtStart, CancellationToken cancellationToken)
         {
             IReadOnlyList<IWebElement> elements;
 
-            LinkedListNode<ExecutionNode>? activeNode = startPoint;
+            ExecutionNode? activeNode = startPoint;
 
-            if (useElementsAtStart && startPoint.Value.CachedElements is object)
+            if (useElementsAtStart && startPoint.CachedElements is object)
             {
-                elements = startPoint.Value.CachedElements;
+                elements = startPoint.CachedElements;
 
                 // Start after this one.
                 activeNode = activeNode.Next;
@@ -185,11 +187,25 @@ namespace AutoStep.Web.Chain
                 elements = Array.Empty<IWebElement>();
             }
 
+            return await ExecuteNode(activeNode, elements, browser, cancellationToken);
+        }
+
+        private async ValueTask<IReadOnlyList<IWebElement>> ExecuteNode(ExecutionNode? activeNode, IReadOnlyList<IWebElement> elements, IBrowser browser, CancellationToken cancellationToken)
+        {
             // We now have our starting point.
             // Go from there.
             while (activeNode is object)
             {
-                elements = await activeNode.Value.Invoke(elements, browser, cancellationToken);
+                await activeNode.EnterNode(elements, browser, cancellationToken);
+
+                // Process the children as well.
+                foreach (var childNode in activeNode.Children)
+                {
+                    // All child nodes receive the same input elements.
+                    await ExecuteNode(childNode, elements, browser, cancellationToken);
+                }
+
+                elements = await activeNode.ExitNode(browser, cancellationToken);
 
                 activeNode = activeNode.Next;
             }

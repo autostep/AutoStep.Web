@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoStep.Web.Chain.Declaration;
+using AutoStep.Web.Chain.Execution;
 using OpenQA.Selenium;
 
 namespace AutoStep.Web.Chain
@@ -44,5 +46,9 @@ namespace AutoStep.Web.Chain
         /// <param name="callback">The async callback to invoke.</param>
         /// <returns>A new <see cref="IElementChain"/> representing the previous chain plus the new node.</returns>
         IElementChain AddNode(string descriptor, Func<IReadOnlyList<IWebElement>, IBrowser, CancellationToken, ValueTask> callback);
+
+        IElementChain AddGroupingNode(string descriptor, Func<IEnumerable<IReadOnlyList<IWebElement>>, IReadOnlyList<IWebElement>> reducer, params Func<IElementChain, IElementChain>[] chainBuilders);
+
+        ExecutionNode CreateExecutionEntryNode();
     }
 }
