@@ -136,3 +136,6 @@ dotnet_diagnostic.CA1032.severity = none
 
 # SA1118: Parameter should not span multiple lines - Need to be able to put big blocks of text in attributes.
 dotnet_diagnostic.SA1118.severity = none
+
+# CA1054: Uri parameters should not be strings
+dotnet_diagnostic.CA1054.severity = none

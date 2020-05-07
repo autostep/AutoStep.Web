@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoStep.Configuration;
 using AutoStep.Extensions.Abstractions;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
@@ -10,15 +10,9 @@ using OpenQA.Selenium.Chrome;
 
 namespace AutoStep.Web
 {
-    public interface IBrowser : IDisposable
-    {
-        public IWebDriver Driver { get; }
-
-        void Initialise();
-
-        ValueTask<bool> WaitForPageReady(CancellationToken cancellationToken);
-    }
-
+    /// <summary>
+    /// Implements a browser. Temporary until multi-browser support comes along.
+    /// </summary>
     public class Browser : IBrowser
     {
         private readonly ILoadedExtensions extensionInfo;
@@ -31,6 +25,8 @@ namespace AutoStep.Web
             this.extensionInfo = extensionInfo;
             this.config = config;
         }
+
+        public IWebDriver Driver => driver!;
 
         public void Initialise()
         {
@@ -55,15 +51,13 @@ namespace AutoStep.Web
 
             var chromeOptions = new ChromeOptions();
 
-            if (config.GetValue("headless", false))
+            if (config.GetRunValue("headless", false))
             {
                 chromeOptions.AddArgument("--headless");
             }
 
             driver = new ChromeDriver(chromeDriverService, chromeOptions);
         }
-
-        public IWebDriver Driver => driver!;
 
         public ValueTask<bool> WaitForPageReady(CancellationToken cancellationToken)
         {
@@ -81,10 +75,10 @@ namespace AutoStep.Web
             }
 
             // Dispose of the chrome driver as well.
-            if(chromeDriverService is object)
+            if (chromeDriverService is object)
             {
                 chromeDriverService.Dispose();
-                chromeDriverService = null;
+                chromeDriverService = null!;
             }
         }
     }

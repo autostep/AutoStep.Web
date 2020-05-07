@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using AutoStep.Execution.Contexts;
 using AutoStep.Web.Chain;
+using AutoStep.Web.Chain.Execution;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;

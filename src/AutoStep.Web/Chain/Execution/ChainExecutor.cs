@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoStep.Web.Chain.Declaration;
-using AutoStep.Web.Chain.Execution;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
-namespace AutoStep.Web.Chain
+namespace AutoStep.Web.Chain.Execution
 {
     /// <summary>
     /// Executes an element chain, with the necessary retry and error-handling behaviour.
@@ -55,11 +53,11 @@ namespace AutoStep.Web.Chain
             // First, build our list of execution nodes (in the reverse order of the chain's PreviousNode relationship).
             var entryPoint = chain.CreateExecutionEntryNode();
 
-            // Get the last node with a cache.
+            // Get the last node with a cache (we'll try to start from this point).
             var lastWithCache = GetLastNodeWithCache(entryPoint);
 
             var startTime = DateTime.UtcNow;
-            var timeoutSpan = TimeSpan.FromMilliseconds(options.TotalWaitTimeoutMs);
+            var timeoutSpan = TimeSpan.FromMilliseconds(options.TotalRetryTimeoutMs);
 
             do
             {
@@ -114,7 +112,7 @@ namespace AutoStep.Web.Chain
                     lastException = ex;
                 }
             }
-            while (!succeeded && (DateTime.UtcNow - startTime) < timeoutSpan);
+            while (!succeeded && DateTime.UtcNow - startTime < timeoutSpan);
 
             if (!succeeded)
             {
@@ -196,16 +194,18 @@ namespace AutoStep.Web.Chain
             // Go from there.
             while (activeNode is object)
             {
+                activeNode.InputElements = elements;
+
                 await activeNode.EnterNode(elements, browser, cancellationToken);
 
                 // Process the children as well.
-                foreach (var childNode in activeNode.Children)
+                foreach (var childNode in activeNode.ChildNodes)
                 {
                     // All child nodes receive the same input elements.
                     await ExecuteNode(childNode, elements, browser, cancellationToken);
                 }
 
-                elements = await activeNode.ExitNode(browser, cancellationToken);
+                elements = activeNode.OutputElements = await activeNode.ExitNode(elements, browser, cancellationToken);
 
                 activeNode = activeNode.Next;
             }

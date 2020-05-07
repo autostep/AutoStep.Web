@@ -118,7 +118,10 @@ namespace AutoStep.Web.Chain
 
             text ??= string.Empty;
 
-            return chain.AddNode($"{nameof(WithText)}('{text}')", elements => elements.Where(x => x.Text == text));
+            return chain.AddNode($"{nameof(WithText)}('{text}')", elements => 
+            { 
+                return elements.Where(x => x.Text == text);
+            });
         }
 
         /// <summary>

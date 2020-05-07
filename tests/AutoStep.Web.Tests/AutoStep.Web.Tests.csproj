@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoStep" Version="1.0.0-develop.301" />
-    <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.62" />
+    <PackageReference Include="AutoStep" Version="1.0.0-develop.304" />
+    <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.63" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="FluentAssertions" Version="5.10.0" />
     <PackageReference Include="Moq" Version="4.13.1" />

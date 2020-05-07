@@ -8,9 +8,8 @@ using OpenQA.Selenium;
 
 namespace AutoStep.Web.Chain.Declaration
 {
-
     /// <summary>
-    /// Represents a declared node of an execution chain.
+    /// Represents a node in an execution chain that executes a single callback operation.
     /// </summary>
     public class SingleNode : DeclarationNode
     {
@@ -51,10 +50,11 @@ namespace AutoStep.Web.Chain.Declaration
         }
 
         /// <summary>
-        /// Gets the callback to invoke that executes this node.
+        /// Gets the callback to invoke when this node executes.
         /// </summary>
         public Func<IReadOnlyList<IWebElement>, IBrowser, CancellationToken, ValueTask<IReadOnlyList<IWebElement>>> Callback { get; }
 
+        /// <inheritdoc/>
         public override ExecutionNode CreateExecutionNode()
         {
             return new SingleExecutionNode(this);

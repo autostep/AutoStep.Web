@@ -24,7 +24,7 @@ namespace AutoStep.Web.Chain
             "id",
             "class",
             "aria-label",
-            "text",
+            "value",
         };
 
         private static readonly int MaxDetailNameLength = DetailAttributeNames.Max(s => s.Length);
@@ -152,12 +152,12 @@ namespace AutoStep.Web.Chain
                 builder.AppendLine("Input:");
                 RenderElementCollection(builder, node.InputElements ?? Array.Empty<IWebElement>(), captureElementDetail, indentDepth + 3);
 
-                if (node.Children.Any())
+                if (node.ChildNodes.Any())
                 {
                     AppendIndent(builder, indentDepth + 2);
                     builder.AppendLine("Children: [ ");
 
-                    foreach (var child in node.Children)
+                    foreach (var child in node.ChildNodes)
                     {
                         AppendIndent(builder, indentDepth + 3);
                         builder.AppendLine("Nested Chain:");

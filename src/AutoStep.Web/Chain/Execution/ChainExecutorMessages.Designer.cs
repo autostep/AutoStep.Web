@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AutoStep.Web.Chain {
+namespace AutoStep.Web.Chain.Execution {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace AutoStep.Web.Chain {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AutoStep.Web.Chain.ChainExecutorMessages", typeof(ChainExecutorMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AutoStep.Web.Chain.Execution.ChainExecutorMessages", typeof(ChainExecutorMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

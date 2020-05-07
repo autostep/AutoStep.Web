@@ -159,12 +159,6 @@ namespace AutoStep.Web.Chain
                 var newNode = current.CreateExecutionNode();
 
                 newNode.Next = firstExecutionNode;
-
-                if (firstExecutionNode is object)
-                {
-                    firstExecutionNode.Previous = newNode;
-                }
-
                 firstExecutionNode = newNode;
 
                 current = current!.PreviousNode;

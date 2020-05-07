@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using AutoStep.Configuration;
 using Microsoft.Extensions.Configuration;
 
 namespace AutoStep.Web
@@ -17,19 +18,53 @@ namespace AutoStep.Web
             this.config = config;
         }
 
-        [Given("I have navigated to {url}")]
+        [Given("I have navigated to {url}", Documentation = @"
+            
+            Navigates to the specified absolute URL in the browser.
+
+            ```
+            Given I have navigated to 'http://myapp.com'
+            Given I have navigated to 'http://localhost:5000'
+            ```
+        ")]
         public void GivenIHaveNavigatedTo(string url)
         {
-            browser.Driver.Navigate().GoToUrl(url);
+            browser.Driver.Navigate().GoToUrl(new Uri(url, UriKind.Absolute));
         }
 
-        [Given("I have navigated to the {appId} application")]
+        [Given("I have navigated to the {appId} application", Documentation = @"
+
+            Navigates to the configured URL for the specified application.            
+
+            The application URL can be set in your ``autostep.config.json`` file, under the ``apps`` item:
+
+            ```json
+            ""apps"": {
+              ""appId"": {
+                ""url"": ""http://localhost:5000""
+              }
+            }
+            ```
+        ")]
         public void GivenIHaveNavigatedToTheApplication(string appId)
         {
             browser.Driver.Navigate().GoToUrl(GetAppUri(appId));
         }
 
-        [Given("I have navigated to {url} in the {appId} application")]
+        [Given("I have navigated to {url} in the {appId} application", Documentation = @"
+
+            Navigates to a relative URL within the specified application.            
+
+            The application root URL can be set in your ``autostep.config.json`` file, under the ``apps`` item:
+
+            ```json
+            ""apps"": {
+              ""appId"": {
+                ""url"": ""http://localhost:5000""
+              }
+            }
+            ```
+        ")]
         public void GivenIHaveNavigatedToTheApplication(string relativeUrl, string appId)
         {
             var appUri = GetAppUri(appId);
@@ -56,30 +91,26 @@ namespace AutoStep.Web
 
         private Uri GetAppUri(string appId)
         {
-            // Locate the application.
-            var applicationConfig = config.GetSection("apps:" + appId);
-
-            if (applicationConfig.Exists())
+            if (string.IsNullOrEmpty(appId))
             {
-                var appUrl = applicationConfig?.GetValue<string?>("url", null);
+                throw new ArgumentException("appId cannot be empty.", nameof(appId));
+            }
 
-                if (string.IsNullOrWhiteSpace(appUrl))
-                {
-                    throw new ProjectConfigurationException($"url for the {appId} application cannot be blank.");
-                }
+            // Locate the application.
+            var appUrl = config.GetRunValue<string?>("apps:" + appId + ":url", null);
 
-                if (Uri.TryCreate(appUrl, UriKind.Absolute, out var uri))
-                {
-                   return new Uri(appUrl);
-                }
-                else
-                {
-                    throw new ProjectConfigurationException($"url for the {appId} application is not a valid absolute URL.");
-                }
+            if (string.IsNullOrWhiteSpace(appUrl))
+            {
+                throw new ProjectConfigurationException($"url for the {appId} application cannot be blank.");
+            }
+
+            if (Uri.TryCreate(appUrl, UriKind.Absolute, out var uri))
+            {
+                return new Uri(appUrl);
             }
             else
             {
-                throw new ProjectConfigurationException($"Configuration for the {appId} application does not exist.");
+                throw new ProjectConfigurationException($"url for the {appId} application is not a valid absolute URL.");
             }
         }
     }

@@ -1,9 +1,13 @@
 ﻿
 Trait: named
 
+  ##
+  ##  Asserts that the specified named component is displayed on the page.
+  ## 
   Step: Then the {name} $component$ should be displayed
-    locateNamed(name) -> assertOne()
+    locateNamed(name) -> displayed() -> assertOne()
 
+  ## Locate one or more named elements.
   locateNamed(name): needs-defining
 
 Trait: clickable + named
@@ -14,7 +18,22 @@ Trait: clickable + named
 Trait: editable + named
 
   Step: Given I have entered {text} into the {name} $component$
-    locateNamed(name) -> type(text)
+    locateNamed(name) -> clearInput() -> type(text)
+
+Trait: has-value + named
+ 
+  ## 
+  ## Asserts that the named component has a specific value.
+  ## 
+  ## Will fail if the component does not exist, if multiple components match.
+  ## 
+  Step: Then the {name} $component$ should have the value {value}
+    locateNamed(name) -> assertOne() -> assertValue(value)
+
+  ##
+  ## Asserts the value of an element.
+  ## 
+  assertValue(value): needs-defining
 
 Component: button
 
@@ -24,9 +43,11 @@ Component: button
 
 Component: field
 
-  traits: editable, named
+  traits: editable, named, has-value
 
   locateNamed(name): locateInputByStandardLabels(name)
+
+  assertValue(value): assertAttribute('value', value)
 
 Component: page
 

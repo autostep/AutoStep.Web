@@ -6,10 +6,14 @@
 
     "debugExtensionBuilds": true,
 
-    "headless": true,
-
     "web": {
-        "totalRetryTimeoutMs": 1000
+        "totalRetryTimeoutMs": 500
+    },
+
+    "runConfigs": {
+        "ci": {
+            "headless": true
+        }
     },
 
     "apps": {

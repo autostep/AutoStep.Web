@@ -6,6 +6,7 @@ using AutoStep.Configuration;
 using AutoStep.Execution.Contexts;
 using AutoStep.Web.Chain;
 using AutoStep.Web.Chain.Declaration;
+using AutoStep.Web.Chain.Execution;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
@@ -25,9 +26,9 @@ namespace AutoStep.Web
             MethodContext = methodContext;
             chainOptions = new ElementChainOptions
             {
-                RetryDelayMs = config.GetRunConfigurationOption("web:retryDelayMs", 200),
+                RetryDelayMs = config.GetRunValue("web:retryDelayMs", 200),
                 PageWaitTimeoutMs = 100,
-                TotalWaitTimeoutMs = config.GetRunConfigurationOption("web:totalRetryTimeoutMs", 2000),
+                TotalRetryTimeoutMs = config.GetRunValue("web:totalRetryTimeoutMs", 2000),
             };
         }
 

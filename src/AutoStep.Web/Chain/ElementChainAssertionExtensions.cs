@@ -81,7 +81,7 @@ namespace AutoStep.Web.Chain
 
                     if (actualAttributeValue != attributeValue)
                     {
-                        throw new AssertionException($"Expecting an '{attributeName}' of '{attributeValue}' for element at index {idx} but found '{actualAttributeValue}'.");
+                        throw new AssertionException($"Expecting a '{attributeName}' of '{attributeValue}' for element at index {idx} but found '{actualAttributeValue}'.");
                     }
                 }
             });

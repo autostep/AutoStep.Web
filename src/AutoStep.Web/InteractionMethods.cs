@@ -1,10 +1,13 @@
 ﻿using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoStep.Execution.Contexts;
 using AutoStep.Web.Chain;
+using AutoStep.Web.Chain.Execution;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using OpenQA.Selenium;
 
 namespace AutoStep.Web
 {
@@ -50,7 +53,17 @@ namespace AutoStep.Web
             AddToChain(q => q.Displayed());
         }
 
-        [InteractionMethod("assertAttribute")]
+        [InteractionMethod("assertAttribute", Documentation = @"
+            Asserts that a named attribute on each element has a specific value. For example:
+
+            ```
+            # Verify the text attribute
+            assertAttribute('text', 'Lorem Ipsum')
+            
+            # Verify the class attribute
+            assertAttribute('class', 'enabled-highlight')
+            ```
+        ")]
         public async ValueTask AssertAttribute(string attributeName, string attributeValue, CancellationToken cancelToken)
         {
             var chain = AddToChain(q => q.AssertAttribute(attributeName, attributeValue));
@@ -66,6 +79,24 @@ namespace AutoStep.Web
 
             // Concrete method; execute chain.
             await ExecuteChainAsync(chain, cancelToken);
+        }
+
+        [InteractionMethod("clearInput", Documentation = @"
+
+            Empties the contents of an input element.            
+
+        ")]
+        public async ValueTask ClearInput(CancellationToken cancelToken)
+        {
+            var chain = AddToChain(q => q.AddNode(nameof(ClearInput), (elements, browser) =>
+            {
+                var jsExec = (IJavaScriptExecutor)WebDriver;
+
+                foreach (var element in elements)
+                {
+                    jsExec.ExecuteScript("arguments[0].select()", element);
+                }
+            }));
         }
 
         [InteractionMethod("type")]

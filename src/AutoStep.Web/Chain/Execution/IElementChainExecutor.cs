@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 
-namespace AutoStep.Web.Chain
+namespace AutoStep.Web.Chain.Execution
 {
     /// <summary>
     /// Service for executing element chains.

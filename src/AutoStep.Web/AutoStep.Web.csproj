@@ -28,8 +28,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="AutoStep" Version="1.0.0-develop.301" />
-    <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.62" />
+    <PackageReference Include="AutoStep" Version="1.0.0-develop.304" />
+    <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.63" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.1" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="*" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
@@ -45,20 +45,20 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Compile Update="Chain\ChainExecutorMessages.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ChainExecutorMessages.resx</DependentUpon>
-    </Compile>
     <Compile Update="Chain\ElementChainMessages.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ElementChainMessages.resx</DependentUpon>
     </Compile>
+    <Compile Update="Chain\Execution\ChainExecutorMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ChainExecutorMessages.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   
   <ItemGroup>
-    <EmbeddedResource Update="Chain\ChainExecutorMessages.resx">
+    <EmbeddedResource Update="Chain\Execution\ChainExecutorMessages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ChainExecutorMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
