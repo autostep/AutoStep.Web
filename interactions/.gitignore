@@ -1,1 +1,3 @@
-.\autostep
+.autostep/
+node_modules/
+scripts/dist/

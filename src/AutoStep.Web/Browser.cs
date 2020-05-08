@@ -31,20 +31,18 @@ namespace AutoStep.Web
         public void Initialise()
         {
             // Try and get from loaded extensions.
-            string driverDir;
+            string platformPath = "linux64";
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                driverDir = extensionInfo.GetPackagePath("Selenium.WebDriver.ChromeDriver", "driver", "win32");
+                platformPath = "win32";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                driverDir = extensionInfo.GetPackagePath("Selenium.WebDriver.ChromeDriver", "driver", "mac64");
+                platformPath = "mac64";
             }
-            else
-            {
-                driverDir = extensionInfo.GetPackagePath("Selenium.WebDriver.ChromeDriver", "driver", "linux64");
-            }
+
+            var driverDir = extensionInfo.GetPackagePath("Selenium.WebDriver.ChromeDriver", "driver", platformPath);
 
             chromeDriverService = ChromeDriverService.CreateDefaultService(driverDir);
             chromeDriverService.HideCommandPromptWindow = true;

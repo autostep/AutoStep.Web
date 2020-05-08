@@ -7,7 +7,8 @@
     "debugExtensionBuilds": true,
 
     "web": {
-        "totalRetryTimeoutMs": 500
+        "totalRetryTimeoutMs": 500,
+        "scripts": "./scripts"
     },
 
     "runConfigs": {

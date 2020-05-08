@@ -18,7 +18,7 @@ Trait: clickable + named
 Trait: editable + named
 
   Step: Given I have entered {text} into the {name} $component$
-    locateNamed(name) -> clearInput() -> type(text)
+    locateNamed(name) -> invokeJs('clearInput') -> type(text)
 
 Trait: has-value + named
  
