@@ -69,8 +69,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="../../interactions/src/*" Pack="true" PackagePath="content/" />
-    <None Update="../../interactions/scripts/dist/*" Pack="true" PackagePath="content/scripts/" />
+    <None Include="../../interactions/src/*" Pack="true" PackagePath="content/" />
+    <None Include="../../interactions/scripts/dist/*" Pack="true" PackagePath="content/scripts/" />
   </ItemGroup>
 
 </Project>
