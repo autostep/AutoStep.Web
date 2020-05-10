@@ -8,7 +8,8 @@
 
     "web": {
         "totalRetryTimeoutMs": 500,
-        "scripts": "./scripts"
+        "scripts": "./scripts/dist/",
+        "useMinifiedScripts": false 
     },
 
     "runConfigs": {

@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoStep.Execution.Contexts;
 using AutoStep.Web.Chain;
 using AutoStep.Web.Chain.Execution;
+using AutoStep.Web.Scripts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
@@ -13,9 +15,18 @@ namespace AutoStep.Web
 {
     public class InteractionMethods : BaseWebMethods
     {
-        public InteractionMethods(IBrowser browser, IConfiguration config, ILogger<InteractionMethods> logger, IElementChainExecutor elementEvaluator, MethodContext methodContext)
+        private readonly IScriptRunner scriptRunner;
+
+        public InteractionMethods(
+            IBrowser browser,
+            IConfiguration config,
+            ILogger<InteractionMethods> logger,
+            IElementChainExecutor elementEvaluator,
+            IScriptRunner scriptRunner,
+            MethodContext methodContext)
             : base(browser, config, logger, elementEvaluator, methodContext)
         {
+            this.scriptRunner = scriptRunner;
         }
 
         [InteractionMethod("select", Documentation = @"
@@ -90,12 +101,7 @@ namespace AutoStep.Web
         {
             var chain = AddToChain(q => q.AddNode(nameof(ClearInput), (elements, browser) =>
             {
-                var jsExec = (IJavaScriptExecutor)WebDriver;
-
-                foreach (var element in elements)
-                {
-                    jsExec.ExecuteScript("arguments[0].select()", element);
-                }
+                scriptRunner.InvokeMethod("fields", "clearInputs", elements);
             }));
         }
 

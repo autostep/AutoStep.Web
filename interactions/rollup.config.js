@@ -8,13 +8,15 @@ export default {
         dir: './scripts/dist',
         entryFileNames: '[name].js',
         format: 'commonjs',
-        esModule: false
+        esModule: false,
+        strict: false
     },
     {
         dir: './scripts/dist',
         entryFileNames: '[name].min.js',
         format: 'commonjs',
         esModule: false,
+        strict: false,
         plugins: [terser()]
     }]
 };
