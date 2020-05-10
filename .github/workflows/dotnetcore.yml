@@ -21,7 +21,20 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.200
-      
+
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: Restore Script Build Packages
+      run: npm install
+      working-directory: interactions
+    
+    - name: Run Roll-up
+      run: npx rollup --config
+      working-directory: interactions      
+            
     - name: GitVersion
       id: gitversion  # step id used as reference for output values
       uses: roryprimrose/rungitversion@v1.0.0
