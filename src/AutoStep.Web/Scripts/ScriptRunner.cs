@@ -2,20 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 
 namespace AutoStep.Web.Scripts
 {
     internal class ScriptRunner : IScriptRunner
     {
-        private readonly IBrowser browser;
-        private readonly IList<IScriptProvider> providers;
         private const string NoModMarker = "__asNOMOD";
         private const string NoFuncMarker = "__asNOFUNC";
 
-        public ScriptRunner(IBrowser browser, IList<IScriptProvider> providers)
+        private readonly IBrowser browser;
+        private readonly ILogger<ScriptRunner> logger;
+        private readonly IList<IScriptProvider> providers;
+
+        public ScriptRunner(IBrowser browser, ILogger<ScriptRunner> logger, IList<IScriptProvider> providers)
         {
             this.browser = browser;
+            this.logger = logger;
             this.providers = providers;
         }
 
@@ -42,6 +46,7 @@ namespace AutoStep.Web.Scripts
             {
                 if (strResult == NoModMarker)
                 {
+                    logger.LogDebug("Module {0} not loaded. Load Required.", moduleName);
                     modLoadRequired = true;
                 }
                 else if (strResult == NoFuncMarker)
@@ -106,6 +111,15 @@ namespace AutoStep.Web.Scripts
         {
             // Try and execute, we will then load the mod and try again if we could not.
             string executionAttempt;
+
+            if (functionName is string)
+            {
+                logger.LogDebug("Invoking Script {0}.{1}", moduleName, functionName);
+            }
+            else
+            {
+                logger.LogDebug("Invoking Script {0}", moduleName);
+            }
 
             if (functionName is string)
             {

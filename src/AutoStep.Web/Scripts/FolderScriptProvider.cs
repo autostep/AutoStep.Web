@@ -56,7 +56,7 @@ namespace AutoStep.Web.Scripts
             // See if the file exists.
             if (useMinifiedScripts)
             {
-                var minifiedPath = Path.Combine(folder, moduleName + ".min.js");
+                var minifiedPath = Path.Combine(absoluteFolder, moduleName + ".min.js");
                 if (File.Exists(minifiedPath))
                 {
                     moduleContent = File.ReadAllText(minifiedPath);
@@ -65,7 +65,7 @@ namespace AutoStep.Web.Scripts
                 }
             }
 
-            var fullPath = Path.Combine(folder, moduleName + ".js");
+            var fullPath = Path.Combine(absoluteFolder, moduleName + ".js");
 
             if (File.Exists(fullPath))
             {
