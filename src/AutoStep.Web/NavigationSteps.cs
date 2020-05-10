@@ -1,22 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using AutoStep.Configuration;
 using Microsoft.Extensions.Configuration;
 
 namespace AutoStep.Web
 {
+    /// <summary>
+    /// Provides browser navigation steps.
+    /// </summary>
     [Steps]
     public class NavigationSteps
     {
         private readonly IBrowser browser;
         private readonly IConfiguration config;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NavigationSteps"/> class.
+        /// </summary>
+        /// <param name="browser">The browser instance.</param>
+        /// <param name="config">The current configuration.</param>
         public NavigationSteps(IBrowser browser, IConfiguration config)
         {
             this.browser = browser;
             this.config = config;
         }
+
+        #pragma warning disable SA1600 // Elements documentation.
+        #pragma warning disable CS1591 // Step docs comes from an attribute; don't want to duplicate info.
 
         [Given("I have navigated to {url}", Documentation = @"
             
@@ -71,7 +80,7 @@ namespace AutoStep.Web
 
             if (!Uri.TryCreate(appUri, relativeUrl, out var fullUri))
             {
-                throw new ArgumentException("Provided url is not valid.");
+                throw new ArgumentException(Messages.ProvidedUrlNotValid.FormatWith(relativeUrl));
             }
 
             browser.Driver.Navigate().GoToUrl(fullUri);
@@ -93,7 +102,7 @@ namespace AutoStep.Web
         {
             if (string.IsNullOrEmpty(appId))
             {
-                throw new ArgumentException("appId cannot be empty.", nameof(appId));
+                throw new ArgumentException(Messages.ParameterCannotBeEmpty, nameof(appId));
             }
 
             // Locate the application.

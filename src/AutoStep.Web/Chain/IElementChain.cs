@@ -47,8 +47,19 @@ namespace AutoStep.Web.Chain
         /// <returns>A new <see cref="IElementChain"/> representing the previous chain plus the new node.</returns>
         IElementChain AddNode(string descriptor, Func<IReadOnlyList<IWebElement>, IBrowser, CancellationToken, ValueTask> callback);
 
+        /// <summary>
+        /// Add a grouping node to the chain, which takes a reducer and a set of nested chains.
+        /// </summary>
+        /// <param name="descriptor">A descriptor for the group.</param>
+        /// <param name="reducer">The reducer callback.</param>
+        /// <param name="chainBuilders">The set of chain builders that define the group.</param>
+        /// <returns>A new <see cref="IElementChain"/> representing the previous chain plus the new node.</returns>
         IElementChain AddGroupingNode(string descriptor, Func<IEnumerable<IReadOnlyList<IWebElement>>, IReadOnlyList<IWebElement>> reducer, params Func<IElementChain, IElementChain>[] chainBuilders);
 
-        ExecutionNode CreateExecutionEntryNode();
+        /// <summary>
+        /// Create an <see cref="ExecutionNode"/> from this element chain, that represents the execution start point.
+        /// </summary>
+        /// <returns>An execution node. Will be null if the chain is empty.</returns>
+        ExecutionNode? CreateExecutionEntryNode();
     }
 }

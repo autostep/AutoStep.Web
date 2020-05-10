@@ -17,8 +17,13 @@ Trait: clickable + named
 
 Trait: editable + named
 
+  ## 
+  ## Types text into the named component.
+  ##
   Step: Given I have entered {text} into the {name} $component$
-    locateNamed(name) -> clearInput() -> type(text)
+    locateNamed(name) -> enterValue(text)
+
+  enterValue(value): needs-defining
 
 Trait: has-value + named
  
@@ -48,6 +53,8 @@ Component: field
   locateNamed(name): locateInputByStandardLabels(name)
 
   assertValue(value): assertAttribute('value', value)
+
+  enterValue(value): clearInput() -> type(value)
 
 Component: page
 

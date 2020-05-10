@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,25 +8,39 @@ using AutoStep.Web.Chain.Execution;
 using AutoStep.Web.Scripts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using OpenQA.Selenium;
 
 namespace AutoStep.Web
 {
-    public class InteractionMethods : BaseWebMethods
+    /// <summary>
+    /// Defines general element interaction methods.
+    /// </summary>
+    public sealed class InteractionMethods : BaseWebMethods
     {
         private readonly IScriptRunner scriptRunner;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InteractionMethods"/> class.
+        /// </summary>
+        /// <param name="browser">The browser.</param>
+        /// <param name="config">The configuration.</param>
+        /// <param name="logger">A logger.</param>
+        /// <param name="chainExecutor">A chain executor.</param>
+        /// <param name="scriptRunner">A script runner.</param>
+        /// <param name="methodContext">The active method context.</param>
         public InteractionMethods(
             IBrowser browser,
             IConfiguration config,
             ILogger<InteractionMethods> logger,
-            IElementChainExecutor elementEvaluator,
+            IElementChainExecutor chainExecutor,
             IScriptRunner scriptRunner,
             MethodContext methodContext)
-            : base(browser, config, logger, elementEvaluator, methodContext)
+            : base(browser, config, logger, chainExecutor, methodContext)
         {
             this.scriptRunner = scriptRunner;
         }
+
+        #pragma warning disable SA1600 // Elements documentation.
+        #pragma warning disable CS1591 // Interaction method docs comes from an attribute; don't want to duplicate info.
 
         [InteractionMethod("select", Documentation = @"
             
@@ -46,19 +59,48 @@ namespace AutoStep.Web
             AddToChain(q => q.Select(selector));
         }
 
-        [InteractionMethod("withAttribute")]
+        [InteractionMethod("withAttribute", Documentation = @"
+
+            Filters the existing set of elements to those with a given attribute value. For example:
+ 
+            ```
+            withAttribute('class', 'class attribute value')
+            withAttribute('id', 'Element id')
+            ```
+
+        ")]
         public void WithAttribute(string attributeName, string attributeValue)
         {
             AddToChain(q => q.WithAttribute(attributeName, attributeValue));
         }
 
-        [InteractionMethod("withText")]
+        [InteractionMethod("withText", Documentation = @"
+
+            Filters the existing set of elements to those with the given text. For example:
+
+            ```
+            select('p') -> withText('Hello')
+            ```
+
+            This method uses the trimmed innerText of each element. It's not suitable for getting input
+            elements with a given value.
+
+        ")]
         public void WithText(string text)
         {
             AddToChain(q => q.WithText(text));
         }
 
-        [InteractionMethod("displayed")]
+        [InteractionMethod("displayed", Documentation = @"
+            
+            Filters the existing set of elements to those that are visible in the viewport. For example:
+
+            ```
+            # Outputs all buttons that are visible.
+            select('button') -> displayed()
+            ```
+
+        ")]
         public void Displayed()
         {
             AddToChain(q => q.Displayed());
@@ -83,7 +125,13 @@ namespace AutoStep.Web
             await ExecuteChainAsync(chain, cancelToken);
         }
 
-        [InteractionMethod("click")]
+        [InteractionMethod("click", Documentation = @"
+    
+            Clicks on the first element in the existing set.
+
+            If the set is empty, or the element is not displayed, we'll raise an error.        
+
+        ")]
         public async ValueTask Click(CancellationToken cancelToken)
         {
             var chain = AddToChain(q => q.Click());
@@ -94,18 +142,44 @@ namespace AutoStep.Web
 
         [InteractionMethod("clearInput", Documentation = @"
 
-            Empties the contents of an input element.            
+            Empties the contents of all elements in the current set. For example:
+
+            ```
+            select('input[type=text]') -> clearInput()
+            ```
+
+            This method sets the 'value' attribute of each element to an empty string.
 
         ")]
         public async ValueTask ClearInput(CancellationToken cancelToken)
         {
-            var chain = AddToChain(q => q.AddNode(nameof(ClearInput), (elements, browser) =>
-            {
-                scriptRunner.InvokeMethod("fields", "clearInputs", elements);
-            }));
+            var chain = AddToChain(q => q.InvokeJavascript(scriptRunner, "fields", "clearInputs"));
+
+            // Concrete method; execute chain.
+            await ExecuteChainAsync(chain, cancelToken);
         }
 
-        [InteractionMethod("type")]
+        [InteractionMethod("type", Documentation = @"
+                        
+            Type characters onto the page, or into an element. For example:
+            
+            ```
+            # Type onto the page.
+            type('Some content')
+
+            # Type into an element.
+            select('input[type=text]') -> type('field value')
+            ```
+
+            This method has two different behaviours, depending on if there are any elements
+            in the current set.
+            
+            1. If there are no elements in the set, then this method will just type directly onto the page,
+               or into whichever element currently has focus.
+            2. If there are elements in the set, this method will type into the first element; it will raise
+               an error if the first element is not displayed, or is not enabled.
+
+        ")]
         public async ValueTask Type(string text, CancellationToken cancelToken)
         {
             var chain = AddToChain(q => q.Type(text));
@@ -116,7 +190,7 @@ namespace AutoStep.Web
 
         [InteractionMethod("assertOne", Documentation = @"
 
-            Assert that exactly one element exists in the chain. 
+            Assert that exactly one element exists in the current set. 
 
             If there are no elements, or more than one element is present, an error will be raised.
 
@@ -129,7 +203,13 @@ namespace AutoStep.Web
             await ExecuteChainAsync(chain, cancelToken);
         }
 
-        [InteractionMethod("assertAtLeastOne")]
+        [InteractionMethod("assertAtLeastOne", Documentation = @"
+
+            Assert that at least one element exists in the current set.
+
+            If there are no elements in the set, an error will be raised.
+        
+        ")]
         public async ValueTask AssertAtLeastOne(CancellationToken cancelToken)
         {
             var chain = AddToChain(q => q.AssertAtLeast(1));
@@ -138,10 +218,21 @@ namespace AutoStep.Web
             await ExecuteChainAsync(chain, cancelToken);
         }
 
-        [InteractionMethod("assertText")]
+        [InteractionMethod("assertText", Documentation = @"
+    
+            Asserts that all the elements in the current set have the specified text. For example:
+
+            ```
+            select('title') -> assertText('My Title')
+            ```
+           
+            This method uses the trimmed innerText of each element. It's not suitable for asserting
+            the value of a given element.
+
+        ")]
         public async ValueTask AssertText(string text, CancellationToken cancelToken)
         {
-            var chain = AddToChain(q => q.AssertAttribute("innerText", text));
+            var chain = AddToChain(q => q.AssertText(text));
 
             // Concrete method; execute chain.
             await ExecuteChainAsync(chain, cancelToken);

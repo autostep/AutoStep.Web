@@ -21,6 +21,7 @@ namespace AutoStep.Web.Chain.Execution
         {
         }
 
+        /// <inheritdoc/>
         public override async ValueTask<IReadOnlyList<IWebElement>> ExitNode(IReadOnlyList<IWebElement> inputElements, IBrowser browser, CancellationToken cancellationToken)
         {
             try

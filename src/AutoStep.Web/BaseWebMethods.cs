@@ -13,16 +13,27 @@ using OpenQA.Selenium;
 
 namespace AutoStep.Web
 {
-    public class BaseWebMethods
+    /// <summary>
+    /// Base class for web interaciton methods.
+    /// </summary>
+    public abstract class BaseWebMethods
     {
         private readonly ElementChainOptions chainOptions;
-        private readonly IElementChainExecutor evaluator;
+        private readonly IElementChainExecutor chainExecutor;
 
-        public BaseWebMethods(IBrowser browser, IConfiguration config, ILogger<BaseWebMethods> logger, IElementChainExecutor evaluator, MethodContext methodContext)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseWebMethods"/> class.
+        /// </summary>
+        /// <param name="browser">The browser instance.</param>
+        /// <param name="config">The configuration.</param>
+        /// <param name="logger">A logger.</param>
+        /// <param name="chainExecutor">A chain executor.</param>
+        /// <param name="methodContext">The current method context.</param>
+        protected BaseWebMethods(IBrowser browser, IConfiguration config, ILogger logger, IElementChainExecutor chainExecutor, MethodContext methodContext)
         {
             Browser = browser;
             Logger = logger;
-            this.evaluator = evaluator;
+            this.chainExecutor = chainExecutor;
             MethodContext = methodContext;
             chainOptions = new ElementChainOptions
             {
@@ -32,14 +43,31 @@ namespace AutoStep.Web
             };
         }
 
-        public IBrowser Browser { get; }
+        /// <summary>
+        /// Gets the active browser instance.
+        /// </summary>
+        protected IBrowser Browser { get; }
 
-        public ILogger Logger { get; }
+        /// <summary>
+        /// Gets a logger.
+        /// </summary>
+        protected ILogger Logger { get; }
 
-        public IWebDriver WebDriver => Browser.Driver;
+        /// <summary>
+        /// Gets the active web driver instance.
+        /// </summary>
+        protected IWebDriver WebDriver => Browser.Driver;
 
-        public MethodContext MethodContext { get; }
+        /// <summary>
+        /// Gets the current method context.
+        /// </summary>
+        protected MethodContext MethodContext { get; }
 
+        /// <summary>
+        /// Add to the current method chain.
+        /// </summary>
+        /// <param name="buildCallback">A build callback that can extend the chain.</param>
+        /// <returns>The updated chain.</returns>
         protected IElementChain AddToChain(Func<IElementChain, IElementChain>? buildCallback = null)
         {
             IElementChain chain;
@@ -63,9 +91,15 @@ namespace AutoStep.Web
             return chain;
         }
 
+        /// <summary>
+        /// Execute an element chain.
+        /// </summary>
+        /// <param name="chain">The chain to execute.</param>
+        /// <param name="cancelToken">A cancellation token.</param>
+        /// <returns>Awaitable result, outputting a set of elements.</returns>
         protected ValueTask<IReadOnlyList<IWebElement>> ExecuteChainAsync(IElementChain chain, CancellationToken cancelToken)
         {
-            return evaluator.ExecuteAsync(chain, cancelToken);
+            return chainExecutor.ExecuteAsync(chain, cancelToken);
         }
     }
 }

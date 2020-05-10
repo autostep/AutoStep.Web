@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using AutoStep.Execution.Contexts;
 using AutoStep.Web.Chain;
 using AutoStep.Web.Chain.Execution;
@@ -11,19 +9,60 @@ using OpenQA.Selenium;
 
 namespace AutoStep.Web
 {
+    /// <summary>
+    /// Defines methods for working with field labels.
+    /// </summary>
     public class LabelMethods : BaseWebMethods
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LabelMethods"/> class.
+        /// </summary>
+        /// <param name="browser">The browser.</param>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="logger">A logger.</param>
+        /// <param name="chainExecutor">A chain executor.</param>
+        /// <param name="methodContext">The active method context.</param>
         public LabelMethods(
             IBrowser browser,
             IConfiguration configuration,
             ILogger<LabelMethods> logger,
-            IElementChainExecutor evaluator,
+            IElementChainExecutor chainExecutor,
             MethodContext methodContext)
-            : base(browser, configuration, logger, evaluator, methodContext)
+            : base(browser, configuration, logger, chainExecutor, methodContext)
         {
         }
 
-        [InteractionMethod("locateInputByStandardLabels")]
+        #pragma warning disable SA1600 // Elements documentation.
+        #pragma warning disable CS1591 // Interaction method docs comes from an attribute; don't want to duplicate info.
+
+        [InteractionMethod("locateInputByStandardLabels", Documentation = @"
+            
+            Attempts to locate input fields using a set of common application behaviours.
+
+            Inputs will be found based on their label's in three different ways:
+
+            1. Labels with a designated for attribute:  
+
+               ```html
+               <label for=""field1"">Field 1</label>
+               <input type=""text"" id=""field1"" />
+               ```  
+
+            2. Labels referenced using the aria-labelledby attribute:
+
+               ```html
+               <label id=""field1Label"">Field 1</label>
+               <input type=""text"" aria-labelledby=""field1Label"" />
+
+            3. Using the aria-label attribute:
+        
+               ```html
+               <input type=""text"" aria-label=""Field 1"" />
+               ```
+
+            All matched inputs will be included in the set.
+
+        ")]
         public void LocateInputByStandardLabels(string name)
         {
             AddToChain(c => c.Union(

@@ -86,5 +86,34 @@ namespace AutoStep.Web.Chain
                 }
             });
         }
+
+        /// <summary>
+        /// Add an assertion operation to the element chain that checks that all the elements in the set have the specified trimmed innerText.
+        /// </summary>
+        /// <param name="chain">The element chain.</param>
+        /// <param name="expectedText">The text to assert on.</param>
+        /// <returns>The new element chain.</returns>
+        public static IElementChain AssertText(this IElementChain chain, string expectedText)
+        {
+            if (chain is null)
+            {
+                throw new System.ArgumentNullException(nameof(chain));
+            }
+
+            expectedText ??= string.Empty;
+
+            return chain.AddNode($"{nameof(AssertText)}('{expectedText}')", elements =>
+            {
+                for (var idx = 0; idx < elements.Count; idx++)
+                {
+                    var actualText = elements[idx].Text;
+
+                    if (actualText != expectedText)
+                    {
+                        throw new AssertionException($"Expecting an element text of '{expectedText}' for element at index {idx} but found '{actualText}'.");
+                    }
+                }
+            });
+        }
     }
 }

@@ -114,6 +114,7 @@ namespace AutoStep.Web.Chain
             return AddNode(newNode);
         }
 
+        /// <inheritdoc/>
         public IElementChain AddGroupingNode(string descriptor, Func<IEnumerable<IReadOnlyList<IWebElement>>, IReadOnlyList<IWebElement>> reducer, params Func<IElementChain, IElementChain>[] chainBuilders)
         {
             if (string.IsNullOrEmpty(descriptor))
@@ -143,11 +144,7 @@ namespace AutoStep.Web.Chain
             return AddNode(newNode);
         }
 
-        private IElementChain AddNode(DeclarationNode newNode)
-        {
-            return new ElementChain(newNode, ActiveExecutionContext, Options);
-        }
-
+        /// <inheritdoc/>
         public ExecutionNode? CreateExecutionEntryNode()
         {
             ExecutionNode? firstExecutionNode = null;
@@ -165,6 +162,11 @@ namespace AutoStep.Web.Chain
             }
 
             return firstExecutionNode;
+        }
+
+        private IElementChain AddNode(DeclarationNode newNode)
+        {
+            return new ElementChain(newNode, ActiveExecutionContext, Options);
         }
     }
 }
