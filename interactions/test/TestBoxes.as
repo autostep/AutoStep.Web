@@ -16,12 +16,6 @@ Feature: TextBox
         | aria-label        | Aria-Labelled |
         | aria-labelledby   | Labelled By   |
 
-    Scenario: Can locate text box single
-
-        Given I have navigated to /textbox in the basic application
-        
-        Then the "Label Fo" field should be displayed
-
     $expectingError: Expecting a single element, but found 0.
     @finding
     Scenario: Fails to Find TextBox with Wrong Label
