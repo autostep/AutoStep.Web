@@ -8,13 +8,19 @@ Feature: TextBox
 
         Given I have navigated to /textbox in the basic application
         
-        Then the 'Label For' field should be displayed
+        Then the <label> field should be displayed
 
     Examples:
-        | title             | label         |      
+        | title             | label         |
         | for attribute     | Label For     |
         | aria-label        | Aria-Labelled |
         | aria-labelledby   | Labelled By   |
+
+    Scenario: Can locate text box single
+
+        Given I have navigated to /textbox in the basic application
+        
+        Then the "Label Fo" field should be displayed
 
     $expectingError: Expecting a single element, but found 0.
     @finding

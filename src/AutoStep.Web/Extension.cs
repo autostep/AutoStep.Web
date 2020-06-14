@@ -42,10 +42,10 @@ namespace AutoStep.Web
                 throw new System.ArgumentNullException(nameof(project));
             }
 
-            project.Compiler.AddStepDefinitionSource(new AssemblyStepDefinitionSource(typeof(Extension).Assembly, logFactory));
+            project.Builder.AddStepDefinitionSource(new AssemblyStepDefinitionSource(typeof(Extension).Assembly, logFactory));
 
-            project.Compiler.Interactions.AddMethods<InteractionMethods>();
-            project.Compiler.Interactions.AddMethods<LabelMethods>();
+            project.Builder.Interactions.AddMethods<InteractionMethods>();
+            project.Builder.Interactions.AddMethods<LabelMethods>();
         }
 
         /// <inheritdoc/>

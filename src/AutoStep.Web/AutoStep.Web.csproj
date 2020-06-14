@@ -28,11 +28,11 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="AutoStep" Version="1.0.0-develop.304" />
+    <PackageReference Include="AutoStep" Version="1.0.0-develop.321" />
     <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.65" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.1" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="*" />
-    <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="83.*" />
+    <PackageReference Include="Selenium.WebDriver" Version="3.141.0" /> 
 
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
