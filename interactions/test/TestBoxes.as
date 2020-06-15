@@ -12,7 +12,7 @@ Feature: TextBox
 
     Examples:
         | title             | label         |
-        | for attribute     | Label For     |
+        | for attribute     | Label Fo      |
         | aria-label        | Aria-Labelled |
         | aria-labelledby   | Labelled By   |
 
