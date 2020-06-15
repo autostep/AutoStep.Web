@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "autostep-cli": {
-      "version": "1.0.0-develop.43",
+      "version": "1.0.0-develop.44",
       "commands": [
         "autostep"
       ]
