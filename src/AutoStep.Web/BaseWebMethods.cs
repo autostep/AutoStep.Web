@@ -25,6 +25,7 @@ namespace AutoStep.Web
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseWebMethods"/> class.
         /// </summary>
+        /// <param name="dependencies">The set of dependencies required.</param>
         protected BaseWebMethods(IWebMethodServices dependencies)
         {
             if (dependencies is null)
@@ -65,6 +66,9 @@ namespace AutoStep.Web
         /// </summary>
         protected MethodContext MethodContext { get; }
 
+        /// <summary>
+        /// Gets a script runner for executing named scripts in the browser.
+        /// </summary>
         protected IScriptRunner ScriptRunner { get; }
 
         /// <summary>

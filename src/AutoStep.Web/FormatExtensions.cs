@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
+﻿using System.Globalization;
 
 namespace AutoStep.Web
 {
+    /// <summary>
+    /// Extension methods for formatting strings in the correct culture.
+    /// </summary>
     public static class FormatExtensions
     {
         /// <summary>

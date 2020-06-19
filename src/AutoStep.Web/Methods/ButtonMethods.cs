@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using AutoStep.Web.Chain;
+﻿using AutoStep.Web.Chain;
 
 namespace AutoStep.Web.Methods
 {
+    /// <summary>
+    /// Defines interaction methods for interacting with buttons.
+    /// </summary>
     public class ButtonMethods : BaseWebMethods
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ButtonMethods"/> class.
+        /// </summary>
+        /// <param name="dependencies">The web method dependencies.</param>
         public ButtonMethods(IWebMethodServices<ButtonMethods> dependencies)
             : base(dependencies)
         {

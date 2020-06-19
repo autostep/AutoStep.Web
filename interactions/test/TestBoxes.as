@@ -65,9 +65,10 @@ Feature: TextBox
         Then the 'Label For' field should have the value '<value>'
 
     Examples:
-        | value                                                                                                 |
-        | Hello World                                                                                           |
-        | ABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZ  |
+        | title              | value                                                                                                 |
+        | Simple             | Hello World                                                                                           |
+        | Long               | ABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZ  |
+        | Accent Characters  | ÂäČÉŃŘŠqűʓ |
 
         
         

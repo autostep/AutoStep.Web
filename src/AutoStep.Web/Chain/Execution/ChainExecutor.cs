@@ -44,14 +44,13 @@ namespace AutoStep.Web.Chain.Execution
             var succeeded = false;
             var attemptCount = 0;
 
-            if (chain.LeafNode is null)
-            {
-                // No point doing anything, the chain is empty.
-                return results;
-            }
-
             // First, build our list of execution nodes (in the reverse order of the chain's PreviousNode relationship).
             var entryPoint = chain.CreateExecutionEntryNode();
+
+            if (entryPoint is null)
+            {
+                return results;
+            }
 
             // Get the last node with a cache (we'll try to start from this point).
             var lastWithCache = GetLastNodeWithCache(entryPoint);

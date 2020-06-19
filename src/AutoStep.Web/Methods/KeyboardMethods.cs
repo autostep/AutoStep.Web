@@ -4,8 +4,15 @@ using AutoStep.Web.Chain;
 
 namespace AutoStep.Web.Methods
 {
+    /// <summary>
+    /// Defines methods for performing keyboard operations.
+    /// </summary>
     public class KeyboardMethods : BaseWebMethods
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyboardMethods"/> class.
+        /// </summary>
+        /// <param name="dependencies">The set of dependencies.</param>
         public KeyboardMethods(IWebMethodServices<CursorMethods> dependencies)
             : base(dependencies)
         {

@@ -13,11 +13,7 @@ namespace AutoStep.Web.Methods
         /// <summary>
         /// Initializes a new instance of the <see cref="LabelMethods"/> class.
         /// </summary>
-        /// <param name="browser">The browser.</param>
-        /// <param name="configuration">The configuration.</param>
-        /// <param name="logger">A logger.</param>
-        /// <param name="chainExecutor">A chain executor.</param>
-        /// <param name="methodContext">The active method context.</param>
+        /// <param name="dependencies">The set of web method dependencies.</param>
         public LabelMethods(IWebMethodServices<LabelMethods> dependencies)
             : base(dependencies)
         {

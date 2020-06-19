@@ -60,6 +60,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Messages.resx</DependentUpon>
     </Compile>
+    <Compile Update="Scripts\FolderScriptProviderMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>FolderScriptProviderMessages.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Scripts\ScriptRunnerMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ScriptRunnerMessages.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   
   <ItemGroup>
@@ -74,6 +84,14 @@
     <EmbeddedResource Update="Messages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Scripts\FolderScriptProviderMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FolderScriptProviderMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Scripts\ScriptRunnerMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScriptRunnerMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

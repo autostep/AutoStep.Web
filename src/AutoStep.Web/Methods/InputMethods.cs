@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using AutoStep.Execution.Contexts;
 using AutoStep.Web.Chain;
-using AutoStep.Web.Chain.Execution;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace AutoStep.Web.Methods
 {
+    /// <summary>
+    /// Defines interaction methods for working with input fields.
+    /// </summary>
     public class InputMethods : BaseWebMethods
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InputMethods"/> class.
+        /// </summary>
+        /// <param name="dependencies">The set of dependencies for web methods.</param>
         public InputMethods(
             IWebMethodServices<InputMethods> dependencies)
             : base(dependencies)

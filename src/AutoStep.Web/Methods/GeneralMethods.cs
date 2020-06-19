@@ -4,8 +4,15 @@ using AutoStep.Web.Chain;
 
 namespace AutoStep.Web.Methods
 {
+    /// <summary>
+    /// Provides general interfaction methods for web elements (selecting, filtering, etc).
+    /// </summary>
     public class GeneralMethods : BaseWebMethods
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GeneralMethods"/> class.
+        /// </summary>
+        /// <param name="dependencies">The web method dependencies.</param>
         public GeneralMethods(IWebMethodServices<InputMethods> dependencies)
             : base(dependencies)
         {

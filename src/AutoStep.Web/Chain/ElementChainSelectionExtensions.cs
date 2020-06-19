@@ -102,6 +102,13 @@ namespace AutoStep.Web.Chain
                 elements => elements.Where(x => x.GetAttribute(attributeName) == attributeValue));
         }
 
+        /// <summary>
+        /// Add an attribute filtering operation to the element chain. Elements that have the specified <paramref name="className"/> in their class list
+        /// will be included in the output; all other elements will be excluded.
+        /// </summary>
+        /// <param name="chain">The element chain.</param>
+        /// <param name="className">The attribute name.</param>
+        /// <returns>The new element chain.</returns>
         public static IElementChain WithClass(this IElementChain chain, string className)
         {
             if (chain is null)

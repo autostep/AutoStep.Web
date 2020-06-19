@@ -4,12 +4,22 @@ using AutoStep.Web.Chain;
 
 namespace AutoStep.Web.Methods
 {
+    /// <summary>
+    /// Defines interaction methods for using the cursor.
+    /// </summary>
     public class CursorMethods : BaseWebMethods
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CursorMethods"/> class.
+        /// </summary>
+        /// <param name="dependencies">The set of dependencies.</param>
         public CursorMethods(IWebMethodServices<CursorMethods> dependencies)
             : base(dependencies)
         {
         }
+
+        #pragma warning disable SA1600 // Elements documentation.
+        #pragma warning disable CS1591 // Interaction method docs comes from an attribute; don't want to duplicate info.
 
         [InteractionMethod("click", Documentation = @"
     

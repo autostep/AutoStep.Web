@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 
 namespace AutoStep.Web.Scripts
 {
+    /// <summary>
+    /// Provides the functionality to locate and load built JS modules, inject them into the browser, and invoke them.
+    /// </summary>
     internal class ScriptRunner : IScriptRunner
     {
         private const string NoModMarker = "__asNOMOD";
@@ -16,6 +18,12 @@ namespace AutoStep.Web.Scripts
         private readonly ILogger<ScriptRunner> logger;
         private readonly IList<IScriptProvider> providers;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScriptRunner"/> class.
+        /// </summary>
+        /// <param name="browser">The browser instance to inject into.</param>
+        /// <param name="logger">A logger.</param>
+        /// <param name="providers">The set of configured script providers.</param>
         public ScriptRunner(IBrowser browser, ILogger<ScriptRunner> logger, IList<IScriptProvider> providers)
         {
             this.browser = browser;
@@ -23,11 +31,13 @@ namespace AutoStep.Web.Scripts
             this.providers = providers;
         }
 
+        /// <inheritdoc/>
         public object InvokeFunction(string moduleName, string? functionName, params object?[] args)
         {
             return InvokeInternal(moduleName, functionName, args)!;
         }
 
+        /// <inheritdoc/>
         public void InvokeMethod(string moduleName, string? functionName, params object?[] args)
         {
             InvokeInternal(moduleName, functionName, args);
@@ -35,9 +45,10 @@ namespace AutoStep.Web.Scripts
 
         private object? InvokeInternal(string moduleName, string? functionName, object?[] args)
         {
-            // Let's try executing it directly first. If the result of the method we invoke is our special marker, then.
             var jsExecutor = (IJavaScriptExecutor)browser.Driver;
 
+            // Let's try executing it directly first. If the result of the method we invoke is one of our special markers, we
+            // can do different things.
             var result = TryExecutionAttempt(jsExecutor, moduleName, functionName, args);
 
             var modLoadRequired = false;
@@ -46,7 +57,8 @@ namespace AutoStep.Web.Scripts
             {
                 if (strResult == NoModMarker)
                 {
-                    logger.LogDebug("Module {0} not loaded. Load Required.", moduleName);
+                    // Our marker was received indicating that the requested module is not loaded.
+                    logger.LogDebug(ScriptRunnerMessages.ModuleNotLoaded, moduleName);
                     modLoadRequired = true;
                 }
                 else if (strResult == NoFuncMarker)
@@ -61,6 +73,7 @@ namespace AutoStep.Web.Scripts
                 // No module; load it into the browser.
                 var module = LoadModule(moduleName);
 
+                // Get the complete script (with wrappers), that loads the module into the browser.
                 var complete = CreateCompleteScript(moduleName, module);
 
                 try
@@ -70,7 +83,7 @@ namespace AutoStep.Web.Scripts
                 catch (Exception ex)
                 {
                     // Error during script creation.
-                    throw new ScriptException($"Error occurred loading the {moduleName} module; '{ex.Message}'", ex);
+                    throw new ScriptException(ScriptRunnerMessages.ErrorLoadingModule.FormatWith(moduleName, ex.Message), ex);
                 }
 
                 // Try again.
@@ -81,7 +94,7 @@ namespace AutoStep.Web.Scripts
                     if (secondStrResult == NoModMarker)
                     {
                         // Still no module (even after we create it). Something is very wrong.
-                        throw new ScriptException($"Unable to load the {moduleName} module.");
+                        throw new ScriptException(ScriptRunnerMessages.UnableToDetectedLoadedModule.FormatWith(moduleName));
                     }
                     else if (secondStrResult == NoFuncMarker)
                     {
@@ -99,11 +112,11 @@ namespace AutoStep.Web.Scripts
             // No function with that name; error.
             if (functionName is string)
             {
-                throw new ScriptException($"No function {functionName} was found within the {moduleName} module.");
+                throw new ScriptException(ScriptRunnerMessages.FunctionNotFound.FormatWith(functionName, moduleName));
             }
             else
             {
-                throw new ScriptException($"The {moduleName} module does not export a default function. A function name should be supplied.");
+                throw new ScriptException(ScriptRunnerMessages.DefaultModuleFunctionNotFound.FormatWith(moduleName));
             }
         }
 
@@ -114,11 +127,11 @@ namespace AutoStep.Web.Scripts
 
             if (functionName is string)
             {
-                logger.LogDebug("Invoking Script {0}.{1}", moduleName, functionName);
+                logger.LogDebug(ScriptRunnerMessages.InvokingFunctionScript, moduleName, functionName);
             }
             else
             {
-                logger.LogDebug("Invoking Script {0}", moduleName);
+                logger.LogDebug(ScriptRunnerMessages.InvokingModuleScript, moduleName);
             }
 
             if (functionName is string)
@@ -133,7 +146,6 @@ namespace AutoStep.Web.Scripts
             else
             {
                 // Module is a function.
-                // Function within module.
                 executionAttempt = "var h = window.asmod, a = arguments;" +
                                    $"if(h && h.{moduleName}) {{" +
                                    $"var s = h.{moduleName}.exports;" +
@@ -149,11 +161,11 @@ namespace AutoStep.Web.Scripts
             {
                 if (functionName is string)
                 {
-                    throw new ScriptException($"Error occurred while invoking the {moduleName}.{functionName} method; '{ex.Message}'.", ex);
+                    throw new ScriptException(ScriptRunnerMessages.ErrorInvokingFunctionScript.FormatWith(moduleName, functionName, ex.Message), ex);
                 }
                 else
                 {
-                    throw new ScriptException($"Error occurred while invoking the {moduleName} method; '{ex.Message}'.", ex);
+                    throw new ScriptException(ScriptRunnerMessages.ErrorInvokingModuleScript.FormatWith(moduleName, ex.Message), ex);
                 }
             }
         }
@@ -175,7 +187,7 @@ namespace AutoStep.Web.Scripts
         {
             if (providers.Count == 0)
             {
-                throw new ScriptException("No script providers are available.");
+                throw new ScriptException(ScriptRunnerMessages.NoScriptProvidersAvailable);
             }
 
             foreach (var provider in providers)
@@ -190,7 +202,7 @@ namespace AutoStep.Web.Scripts
             var locations = linePrefix + string.Join(Environment.NewLine + " - ", providers.Select(x => x.GetLocationDescription(moduleName)));
 
             // Could not load the module.
-            throw new ScriptException(string.Format("Could not load requested script module {0}. Looked in: {1}", moduleName, locations));
+            throw new ScriptException(ScriptRunnerMessages.CouldNotLoadModule.FormatWith(moduleName, locations));
         }
     }
 }

@@ -58,7 +58,12 @@ namespace AutoStep.Web.Chain.Declaration
             // Go through each of the element chains and create our entry point execution node.
             foreach (var item in NestedChains)
             {
-                executionNodeChildren.Add(item.CreateExecutionEntryNode());
+                var executionNode = item.CreateExecutionEntryNode();
+
+                if (executionNode is object)
+                {
+                    executionNodeChildren.Add(executionNode);
+                }
             }
 
             // Create the execution node (with the given execution child nodes).
