@@ -38,6 +38,40 @@ namespace AutoStep.Web.Methods
             AddToChain(q => q.Select(selector));
         }
 
+        [InteractionMethod("closestParent", Documentation = @"
+
+            Finds the closest parent to each element in the set that matches a given CSS selector, traversing up the 
+            elements in the page to the root element.
+
+            Elements with no parent matching the selector are excluded from the results.
+
+            For example, given the following HTML:
+
+            ```html
+            <div class=""first"">
+                <div class=""second"">
+                    <div class=""third"">Hello World</div>
+                </div>
+            </div>  
+            ```
+
+            Then the following chain would output the 'first' div:
+
+            ```
+            select('.third') -> closestParent('.first')
+            ```
+            
+            but this chain would result in no elements:
+
+            ```
+            select('.second') -> closestParent('.third')
+            ```
+        ")]
+        public void ClosestParent(string selector)
+        {
+            AddToChain(q => q.InvokeJavascript(ScriptRunner, "elements", "closestParent", selector));
+        }
+
         [InteractionMethod("withAttribute", Documentation = @"
 
             Filters the existing set of elements to those with a given attribute value. For example:

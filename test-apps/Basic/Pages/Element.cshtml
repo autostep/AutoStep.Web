@@ -1,0 +1,18 @@
+﻿@page
+@{
+  ViewData["Title"] = "Element";
+}
+
+<div class="immediate-parent">
+  <div class="parent">
+    <p class="child">Content</p>
+  </div>
+</div>
+
+<div class="indirect-parent">
+  <div class="parent">
+    <div>
+      <p class="child">Content</p>
+    </div>
+  </div>
+</div>

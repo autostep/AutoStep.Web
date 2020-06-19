@@ -2,7 +2,8 @@ import {terser} from 'rollup-plugin-terser';
 
 export default {
     input: { 
-        fields: './scripts/src/fields.js'
+        fields: './scripts/src/fields.js',
+        elements: './scripts/src/elements.js'
     },
     output: [{
         dir: './scripts/dist',

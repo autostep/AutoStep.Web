@@ -6,3 +6,8 @@ Component: test-button
         
     Step: Then the {name} button should not be marked as clicked
         locateButtonWithDefaultRules(name) -> assertDoesNotHaveClass('test-clicked')
+
+Component: parent-finder
+
+    Step: Then the {parentSelector} parent element of the {childSelector} element exists
+        select(childSelector) -> closestParent(parentSelector) -> assertOne()

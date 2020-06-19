@@ -9,12 +9,13 @@
     "web": {
         "totalRetryTimeoutMs": 500,
         "scripts": "./scripts/dist/",
-        "useMinifiedScripts": false 
+        "useMinifiedScripts": false
     },
 
     "runConfigs": {
         "ci": {
-            "headless": true
+            "headless": true,
+            "parallelCount": 3
         }
     },
 

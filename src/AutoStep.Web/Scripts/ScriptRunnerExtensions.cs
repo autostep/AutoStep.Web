@@ -44,7 +44,7 @@ namespace AutoStep.Web.Scripts
                 {
                     result = set.Cast<IWebElement>().ToArray();
                 }
-                else if (typeof(IList<IWebElement>).IsAssignableFrom(typeof(TResult)))
+                else if (typeof(IReadOnlyList<IWebElement>).IsAssignableFrom(typeof(TResult)))
                 {
                     result = set.Cast<IWebElement>().ToList();
                 }
