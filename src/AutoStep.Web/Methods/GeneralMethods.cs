@@ -261,5 +261,25 @@ namespace AutoStep.Web.Methods
             // Concrete method; execute chain.
             await ExecuteChainAsync(chain, cancelToken);
         }
+
+        [InteractionMethod("assertTextIsNot", Documentation = @"
+    
+            Asserts that none of the elements in the current set have the specified text. For example:
+
+            ```
+            select('title') -> assertTextIsNot('Bad Title')
+            ```
+           
+            This method uses the trimmed innerText of each element. It's not suitable for asserting
+            the value of a given element.
+
+        ")]
+        public async ValueTask AssertTextIsNot(string text, CancellationToken cancelToken)
+        {
+            var chain = AddToChain(q => q.AssertTextIsNot(text));
+
+            // Concrete method; execute chain.
+            await ExecuteChainAsync(chain, cancelToken);
+        }
     }
 }
