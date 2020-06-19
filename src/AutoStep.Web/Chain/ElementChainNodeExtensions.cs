@@ -132,6 +132,29 @@ namespace AutoStep.Web.Chain
             });
         }
 
+        /// <summary>
+        /// Adds a non-modifying node to the chain that iterates over the set of elements.
+        /// </summary>
+        /// <param name="chain">The chain.</param>
+        /// <param name="descriptor">A description of the node.</param>
+        /// <param name="callback">The callback to invoke.</param>
+        /// <returns>A new <see cref="IElementChain"/> representing the previous chain plus the new node.</returns>
+        public static IElementChain AddForEachNode(this IElementChain chain, string descriptor, Action<IWebElement, int> callback)
+        {
+            AssertArguments(chain, descriptor, callback);
+
+            return chain.AddNode(descriptor, (webElements, browser, cancelToken) =>
+            {
+                for (var idx = 0; idx < webElements.Count; idx++)
+                {
+                    // Need to evaluate at each stage.
+                    callback(webElements[idx], idx);
+                }
+
+                return default(ValueTask);
+            });
+        }
+
         private static void AssertArguments(IElementChain chain, string descriptor, Delegate callback)
         {
             if (chain is null)

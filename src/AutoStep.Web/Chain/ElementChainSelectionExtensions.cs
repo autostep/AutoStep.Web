@@ -102,6 +102,23 @@ namespace AutoStep.Web.Chain
                 elements => elements.Where(x => x.GetAttribute(attributeName) == attributeValue));
         }
 
+        public static IElementChain WithClass(this IElementChain chain, string className)
+        {
+            if (chain is null)
+            {
+                throw new System.ArgumentNullException(nameof(chain));
+            }
+
+            if (string.IsNullOrEmpty(className))
+            {
+                throw new System.ArgumentException(ElementChainMessages.BlankStringParameter, nameof(className));
+            }
+
+            return chain.AddNode(
+                $"{nameof(WithClass)}({className})",
+                elements => elements.Where(x => x.HasClass(className)));
+        }
+
         /// <summary>
         /// Add a filtering operation to the element chain that filters based on the text of the element.
         /// Elements that have an innerText property (sans whitespace) equal to <paramref name="text"/> will be included. All other elements will be excluded.

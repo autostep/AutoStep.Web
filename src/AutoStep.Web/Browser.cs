@@ -30,6 +30,11 @@ namespace AutoStep.Web
 
         public void Initialise()
         {
+            if (driver is object)
+            {
+                return;
+            }
+
             // Try and get from loaded extensions.
             string platformPath = "linux64";
 

@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Linq;
-using AutoStep.Execution.Contexts;
 using AutoStep.Web.Chain;
-using AutoStep.Web.Chain.Execution;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 
-namespace AutoStep.Web
+namespace AutoStep.Web.Methods
 {
     /// <summary>
     /// Defines methods for working with field labels.
@@ -22,13 +18,8 @@ namespace AutoStep.Web
         /// <param name="logger">A logger.</param>
         /// <param name="chainExecutor">A chain executor.</param>
         /// <param name="methodContext">The active method context.</param>
-        public LabelMethods(
-            IBrowser browser,
-            IConfiguration configuration,
-            ILogger<LabelMethods> logger,
-            IElementChainExecutor chainExecutor,
-            MethodContext methodContext)
-            : base(browser, configuration, logger, chainExecutor, methodContext)
+        public LabelMethods(IWebMethodServices<LabelMethods> dependencies)
+            : base(dependencies)
         {
         }
 

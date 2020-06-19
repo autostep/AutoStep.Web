@@ -8,12 +8,29 @@ Trait: named
     locateNamed(name) -> displayed() -> assertOne()
 
   ## Locate one or more named elements.
+  ## This will typically be by a label, or aria- attributes used to name elements.
   locateNamed(name): needs-defining
 
 Trait: clickable + named
 
+  ## 
+  ## Simulate a mouse click on the named component.
+  ##
   Step: Given I have clicked the {name} $component$
     locateNamed(name) -> click()
+    
+Trait: clickable + named + can-disable
+
+  Step: Given I have clicked the {name} $component$
+    locateNamed(name) -> assertEnabled() -> click()
+
+Trait: can-disable + named
+
+  Step: Then the {name} $component$ should be enabled
+    locateNamed(name) -> assertEnabled()
+
+  Step: Then the {name} $component$ should be disabled
+    locateNamed(name) -> assertDisabled()
 
 Trait: editable + named
 
@@ -22,6 +39,16 @@ Trait: editable + named
   ##
   Step: Given I have entered {text} into the {name} $component$
     locateNamed(name) -> enterValue(text)
+
+  enterValue(value): needs-defining
+
+Trait: editable + named + can-disable
+
+  ## 
+  ## Types text into the named component. Will fail if the element is not enabled.
+  ##
+  Step: Given I have entered {text} into the {name} $component$
+    locateNamed(name) -> assertEnabled() -> enterValue(text)
 
   enterValue(value): needs-defining
 
@@ -40,15 +67,22 @@ Trait: has-value + named
   ## 
   assertValue(value): needs-defining
 
+# Buttons can be
+# - input[type=submit]
+# - button
 Component: button
 
-  traits: clickable, named
+  traits: clickable, named, can-disable
 
-  locateNamed(name): select('input[type=submit]') -> withText(name)
+  locateNamed(name): locateButtonWithDefaultRules(name)
 
 Component: field
 
-  traits: editable, named, has-value
+  traits: editable, 
+          named, 
+          has-value, 
+          clickable, 
+          can-disable
 
   locateNamed(name): locateInputByStandardLabels(name)
 

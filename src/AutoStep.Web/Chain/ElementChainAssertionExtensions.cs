@@ -52,6 +52,64 @@ namespace AutoStep.Web.Chain
         }
 
         /// <summary>
+        /// Add an assertion operation to the element chain that checks that all the elements in the set have the specified class in their class list.
+        /// </summary>
+        /// <param name="chain">The element chain.</param>
+        /// <param name="className">The class name to require.</param>
+        /// <returns>The new element chain.</returns>
+        public static IElementChain AssertHasClass(this IElementChain chain, string className)
+        {
+            if (chain is null)
+            {
+                throw new System.ArgumentNullException(nameof(chain));
+            }
+
+            if (string.IsNullOrEmpty(className))
+            {
+                throw new System.ArgumentException(ElementChainMessages.BlankStringParameter, nameof(className));
+            }
+
+            return chain.AddForEachNode($"{nameof(AssertHasClass)}('{className}')", (el, idx) =>
+            {
+                var classList = el.GetClassList();
+
+                if (!classList.Contains(className))
+                {
+                    throw new AssertionException($"Expecting the element at index {idx} to have the class {className}, but actual class list is \"{string.Join(' ', classList)}\".");
+                }
+            });
+        }
+
+        /// <summary>
+        /// Add an assertion operation to the element chain that checks that all the elements in the set have the specified class in their class list.
+        /// </summary>
+        /// <param name="chain">The element chain.</param>
+        /// <param name="className">The class name to require.</param>
+        /// <returns>The new element chain.</returns>
+        public static IElementChain AssertDoesNotHaveClass(this IElementChain chain, string className)
+        {
+            if (chain is null)
+            {
+                throw new System.ArgumentNullException(nameof(chain));
+            }
+
+            if (string.IsNullOrEmpty(className))
+            {
+                throw new System.ArgumentException(ElementChainMessages.BlankStringParameter, nameof(className));
+            }
+
+            return chain.AddForEachNode($"{nameof(AssertDoesNotHaveClass)}('{className}')", (el, idx) =>
+            {
+                var classList = el.GetClassList();
+
+                if (classList.Contains(className))
+                {
+                    throw new AssertionException($"Expecting the element at index {idx} not to have the class {className}; actual class list is \"{string.Join(' ', classList)}\".");
+                }
+            });
+        }
+
+        /// <summary>
         /// Add an assertion operation to the element chain that checks that all the elements in the set have the specified <paramref name="attributeValue"/> for the
         /// <paramref name="attributeName"/> attribute.
         /// </summary>
@@ -73,16 +131,55 @@ namespace AutoStep.Web.Chain
 
             attributeValue ??= string.Empty;
 
-            return chain.AddNode($"{nameof(AssertAttribute)}('{attributeName}', '{attributeValue}')", elements =>
+            return chain.AddForEachNode($"{nameof(AssertAttribute)}('{attributeName}', '{attributeValue}')", (el, idx) =>
             {
-                for (var idx = 0; idx < elements.Count; idx++)
-                {
-                    var actualAttributeValue = elements[idx].GetAttribute(attributeName);
+                var actualAttributeValue = el.GetAttribute(attributeName);
 
-                    if (actualAttributeValue != attributeValue)
-                    {
-                        throw new AssertionException($"Expecting a '{attributeName}' of '{attributeValue}' for element at index {idx} but found '{actualAttributeValue}'.");
-                    }
+                if (actualAttributeValue != attributeValue)
+                {
+                    throw new AssertionException($"Expecting a '{attributeName}' of '{attributeValue}' for element at index {idx} but found '{actualAttributeValue}'.");
+                }
+            });
+        }
+
+        /// <summary>
+        /// Add an assertion operation to the element chain that checks that all the elements in the set are enabled.
+        /// </summary>
+        /// <param name="chain">The element chain.</param>
+        /// <returns>The new element chain.</returns>
+        public static IElementChain AssertEnabled(this IElementChain chain)
+        {
+            if (chain is null)
+            {
+                throw new System.ArgumentNullException(nameof(chain));
+            }
+
+            return chain.AddForEachNode($"{nameof(AssertEnabled)}()", (el, idx) =>
+            {
+                if (el.GetBooleanProperty("disabled"))
+                {
+                    throw new AssertionException($"Expecting element at index {idx} to be enabled, but the element was disabled.");
+                }
+            });
+        }
+
+        /// <summary>
+        /// Add an assertion operation to the element chain that checks that all the elements in the set are disabled.
+        /// </summary>
+        /// <param name="chain">The element chain.</param>
+        /// <returns>The new element chain.</returns>
+        public static IElementChain AssertDisabled(this IElementChain chain)
+        {
+            if (chain is null)
+            {
+                throw new System.ArgumentNullException(nameof(chain));
+            }
+
+            return chain.AddForEachNode($"{nameof(AssertDisabled)}()", (el, idx) =>
+            {
+                if (!el.GetBooleanProperty("disabled"))
+                {
+                    throw new AssertionException($"Expecting element at index {idx} to be disabled, but the element was enabled.");
                 }
             });
         }
@@ -102,16 +199,13 @@ namespace AutoStep.Web.Chain
 
             expectedText ??= string.Empty;
 
-            return chain.AddNode($"{nameof(AssertText)}('{expectedText}')", elements =>
+            return chain.AddForEachNode($"{nameof(AssertText)}('{expectedText}')", (el, idx) =>
             {
-                for (var idx = 0; idx < elements.Count; idx++)
-                {
-                    var actualText = elements[idx].Text;
+                var actualText = el.Text;
 
-                    if (actualText != expectedText)
-                    {
-                        throw new AssertionException($"Expecting an element text of '{expectedText}' for element at index {idx} but found '{actualText}'.");
-                    }
+                if (actualText != expectedText)
+                {
+                    throw new AssertionException($"Expecting an element text of '{expectedText}' for element at index {idx} but found '{actualText}'.");
                 }
             });
         }

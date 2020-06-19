@@ -1,0 +1,57 @@
+﻿@page
+@{
+  ViewData["Title"] = "Button";
+}
+
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.13.0/css/all.css">
+
+<p>
+  <button class="test-button">Button Tag</button>
+</p>
+
+<p>
+  <button class="test-button" type="submit">Button Tag Submit</button>
+</p>
+
+<p>
+  <button class="test-button" type="submit" aria-label="Aria-Label Button"><i class="fas fa-mouse"></i></button>
+</p>
+
+<p>
+  <a role="button" class="test-button">Button Role</a>
+</p>
+
+<p>
+  <a role="button" class="test-button" aria-label="Button Role Aria Label"><i class="fas fa-stopwatch"></i></a>
+</p>
+
+<p>
+  <input type="button" class="test-button" value="Input Tag Button" />
+</p>
+
+<p>
+  <input type="submit" class="test-button" value="Input Tag Submit Button" />
+</p>
+
+<p>
+  <input type="reset" class="test-button" value="Input Tag Reset Button" />
+</p>
+
+<p>
+  <input type="button" class="test-button" aria-label="Input Tag Aria-Label Button" value="Junk" />
+</p>
+
+<p>
+  <button class="test-button" disabled>Disabled</button>
+</p>
+
+<script>
+  var testButtons = document.querySelectorAll(".test-button");
+
+  testButtons.forEach(button => {
+    button.onclick = (ev) => {
+      button.classList.add("test-clicked");
+    }
+  });
+
+</script>

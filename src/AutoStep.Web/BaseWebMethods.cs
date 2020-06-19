@@ -7,6 +7,7 @@ using AutoStep.Execution.Contexts;
 using AutoStep.Web.Chain;
 using AutoStep.Web.Chain.Declaration;
 using AutoStep.Web.Chain.Execution;
+using AutoStep.Web.Scripts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
@@ -14,7 +15,7 @@ using OpenQA.Selenium;
 namespace AutoStep.Web
 {
     /// <summary>
-    /// Base class for web interaciton methods.
+    /// Base class for web interaction methods.
     /// </summary>
     public abstract class BaseWebMethods
     {
@@ -24,22 +25,23 @@ namespace AutoStep.Web
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseWebMethods"/> class.
         /// </summary>
-        /// <param name="browser">The browser instance.</param>
-        /// <param name="config">The configuration.</param>
-        /// <param name="logger">A logger.</param>
-        /// <param name="chainExecutor">A chain executor.</param>
-        /// <param name="methodContext">The current method context.</param>
-        protected BaseWebMethods(IBrowser browser, IConfiguration config, ILogger logger, IElementChainExecutor chainExecutor, MethodContext methodContext)
+        protected BaseWebMethods(IWebMethodServices dependencies)
         {
-            Browser = browser;
-            Logger = logger;
-            this.chainExecutor = chainExecutor;
-            MethodContext = methodContext;
+            if (dependencies is null)
+            {
+                throw new ArgumentNullException(nameof(dependencies));
+            }
+
+            Browser = dependencies.Browser;
+            Logger = dependencies.Logger;
+            this.chainExecutor = dependencies.ChainExecutor;
+            MethodContext = dependencies.Context;
+            ScriptRunner = dependencies.ScriptRunner;
             chainOptions = new ElementChainOptions
             {
-                RetryDelayMs = config.GetRunValue("web:retryDelayMs", 200),
+                RetryDelayMs = dependencies.Configuration.GetRunValue("web:retryDelayMs", 200),
                 PageWaitTimeoutMs = 100,
-                TotalRetryTimeoutMs = config.GetRunValue("web:totalRetryTimeoutMs", 2000),
+                TotalRetryTimeoutMs = dependencies.Configuration.GetRunValue("web:totalRetryTimeoutMs", 2000),
             };
         }
 
@@ -62,6 +64,8 @@ namespace AutoStep.Web
         /// Gets the current method context.
         /// </summary>
         protected MethodContext MethodContext { get; }
+
+        protected IScriptRunner ScriptRunner { get; }
 
         /// <summary>
         /// Add to the current method chain.

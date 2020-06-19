@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
 using AutoStep.Assertion;
 using AutoStep.Elements.Metadata;
 using AutoStep.Execution;
@@ -18,9 +19,9 @@ namespace AutoStep.ExtensionTesting
     {
         public const string ExpectingErrorName = "expectingError";
 
-        public override async ValueTask OnScenarioAsync(IServiceProvider scope, ScenarioContext ctxt, Func<IServiceProvider, ScenarioContext, CancellationToken, ValueTask> nextHandler, CancellationToken cancelToken)
+        public override async ValueTask OnScenarioAsync(ILifetimeScope scope, ScenarioContext ctxt, Func<ILifetimeScope, ScenarioContext, CancellationToken, ValueTask> nextHandler, CancellationToken cancelToken)
         {
-            var logger = scope.GetRequiredService<ILogger<ErrorEventHandler>>();
+            var logger = scope.Resolve<ILogger<ErrorEventHandler>>();
 
             // Check the options on the scenario.
             var expectingErrorOption = ctxt.Scenario.Annotations.OfType<IOptionInfo>().FirstOrDefault(x => x.Name.Equals(ExpectingErrorName, StringComparison.CurrentCultureIgnoreCase));
@@ -56,20 +57,19 @@ namespace AutoStep.ExtensionTesting
                     if (expectingErrorOption.Setting is null)
                     {
                         // No error; throw.
-                        throw new AssertionException("Expected the scenario to fail, but the scenario passed.");
+                        ctxt.FailException = new AssertionException("Expected the scenario to fail, but the scenario passed.");
                     }
                     else
                     {
                         // No error; throw.
-                        throw new AssertionException("Expected the scenario to fail, with the message '" + expectingErrorOption.Setting + "', but the scenario passed.");
+                        ctxt.FailException = new AssertionException("Expected the scenario to fail, with the message '" + expectingErrorOption.Setting + "', but the scenario passed.");
                     }
                 }
                 else
                 {
                     if (expectingErrorOption.Setting is object && encounteredError.Message != expectingErrorOption.Setting)
                     {
-                        // Wrong message.
-                        throw new AssertionException("Expected the scenario to fail, with the message '" + expectingErrorOption.Setting + "', but actual message was '" + encounteredError.Message + "'.");
+                        ctxt.FailException = new AssertionException("Expected the scenario to fail, with the message '" + expectingErrorOption.Setting + "', but actual message was '" + encounteredError.Message + "'.");
                     }
                     else
                     {

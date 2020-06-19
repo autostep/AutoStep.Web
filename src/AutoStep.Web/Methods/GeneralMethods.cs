@@ -1,42 +1,14 @@
-﻿using System.Linq;
-using System.Reflection.Metadata;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using AutoStep.Execution.Contexts;
 using AutoStep.Web.Chain;
-using AutoStep.Web.Chain.Execution;
-using AutoStep.Web.Scripts;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
-namespace AutoStep.Web
+namespace AutoStep.Web.Methods
 {
-    /// <summary>
-    /// Defines general element interaction methods.
-    /// </summary>
-    public sealed class InteractionMethods : BaseWebMethods
+    public class GeneralMethods : BaseWebMethods
     {
-        private readonly IScriptRunner scriptRunner;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="InteractionMethods"/> class.
-        /// </summary>
-        /// <param name="browser">The browser.</param>
-        /// <param name="config">The configuration.</param>
-        /// <param name="logger">A logger.</param>
-        /// <param name="chainExecutor">A chain executor.</param>
-        /// <param name="scriptRunner">A script runner.</param>
-        /// <param name="methodContext">The active method context.</param>
-        public InteractionMethods(
-            IBrowser browser,
-            IConfiguration config,
-            ILogger<InteractionMethods> logger,
-            IElementChainExecutor chainExecutor,
-            IScriptRunner scriptRunner,
-            MethodContext methodContext)
-            : base(browser, config, logger, chainExecutor, methodContext)
+        public GeneralMethods(IWebMethodServices<InputMethods> dependencies)
+            : base(dependencies)
         {
-            this.scriptRunner = scriptRunner;
         }
 
         #pragma warning disable SA1600 // Elements documentation.
@@ -72,6 +44,20 @@ namespace AutoStep.Web
         public void WithAttribute(string attributeName, string attributeValue)
         {
             AddToChain(q => q.WithAttribute(attributeName, attributeValue));
+        }
+
+        [InteractionMethod("withClass", Documentation = @"
+
+            Filters the existing set of elements to those with a given class in their class list. For example:
+ 
+            ```
+            withClass('class-name')
+            ```
+
+        ")]
+        public void WithClass(string className)
+        {
+            AddToChain(q => q.WithClass(className));
         }
 
         [InteractionMethod("withText", Documentation = @"
@@ -125,64 +111,61 @@ namespace AutoStep.Web
             await ExecuteChainAsync(chain, cancelToken);
         }
 
-        [InteractionMethod("click", Documentation = @"
-    
-            Clicks on the first element in the existing set.
+        [InteractionMethod("assertEnabled", Documentation = @"
 
-            If the set is empty, or the element is not displayed, we'll raise an error.        
+            Assert that all the elements in the set are 'enabled', i.e. do not have the disabled attribute.
+
+            If any of the elements in the set are disabled, a failure will be reported.
 
         ")]
-        public async ValueTask Click(CancellationToken cancelToken)
+        public async ValueTask AssertEnabled(CancellationToken cancelToken)
         {
-            var chain = AddToChain(q => q.Click());
+            var chain = AddToChain(q => q.AssertEnabled());
 
             // Concrete method; execute chain.
             await ExecuteChainAsync(chain, cancelToken);
         }
 
-        [InteractionMethod("clearInput", Documentation = @"
+        [InteractionMethod("assertDisabled", Documentation = @"
 
-            Empties the contents of all elements in the current set. For example:
+            Assert that all the elements in the set are 'disabled', i.e. have the disabled attribute.
 
-            ```
-            select('input[type=text]') -> clearInput()
-            ```
-
-            This method sets the 'value' attribute of each element to an empty string.
+            If any of the elements in the set are enabled, a failure will be reported.
 
         ")]
-        public async ValueTask ClearInput(CancellationToken cancelToken)
+        public async ValueTask AssertDisabled(CancellationToken cancelToken)
         {
-            var chain = AddToChain(q => q.InvokeJavascript(scriptRunner, "fields", "clearInputs"));
+            var chain = AddToChain(q => q.AssertDisabled());
 
             // Concrete method; execute chain.
             await ExecuteChainAsync(chain, cancelToken);
         }
 
-        [InteractionMethod("type", Documentation = @"
-                        
-            Type characters onto the page, or into an element. For example:
-            
-            ```
-            # Type onto the page.
-            type('Some content')
+        [InteractionMethod("assertHasClass", Documentation = @"
 
-            # Type into an element.
-            select('input[type=text]') -> type('field value')
-            ```
+            Assert that all the elements in the set have the given class name in their class list.
 
-            This method has two different behaviours, depending on if there are any elements
-            in the current set.
-            
-            1. If there are no elements in the set, then this method will just type directly onto the page,
-               or into whichever element currently has focus.
-            2. If there are elements in the set, this method will type into the first element; it will raise
-               an error if the first element is not displayed, or is not enabled.
+            If any of the elements in the set do not possess that class, an error will be raised.
 
         ")]
-        public async ValueTask Type(string text, CancellationToken cancelToken)
+        public async ValueTask AssertHasClass(string className, CancellationToken cancelToken)
         {
-            var chain = AddToChain(q => q.Type(text));
+            var chain = AddToChain(q => q.AssertHasClass(className));
+
+            // Concrete method; execute chain.
+            await ExecuteChainAsync(chain, cancelToken);
+        }
+
+        [InteractionMethod("assertDoesNotHaveClass", Documentation = @"
+
+            Assert that all the elements in the set do not have the given class name in their class list.
+
+            If any of the elements in the set do possess that class, an error will be raised.
+
+        ")]
+        public async ValueTask AssertDoesNotHaveClass(string className, CancellationToken cancelToken)
+        {
+            var chain = AddToChain(q => q.AssertDoesNotHaveClass(className));
 
             // Concrete method; execute chain.
             await ExecuteChainAsync(chain, cancelToken);

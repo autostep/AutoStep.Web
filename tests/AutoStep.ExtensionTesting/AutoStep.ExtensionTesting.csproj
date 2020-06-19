@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoStep" Version="1.0.0-develop.321" />
-    <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.65" />
+    <PackageReference Include="AutoStep" Version="1.0.0-develop.324" />
+    <PackageReference Include="AutoStep.Extensions.Abstractions" Version="1.0.0-develop.68" />
   </ItemGroup>
 
 </Project>
